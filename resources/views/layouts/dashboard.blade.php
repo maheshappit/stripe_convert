@@ -1,1304 +1,827 @@
-<head>
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-
-
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-    
-    <!-- SideBar-Menu CSS -->
-
-    <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
-
-    <link rel="stylesheet" href="{{ asset('assets/css/demo.css') }}">
-
-
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
-
-
-    <!-- //bootstap css cdn -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <!-- Demo CSS -->
-
-    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/select/1.3.4/js/dataTables.select.min.js"></script>
-
-    <link href="https://cdn.datatables.net/v/bs5/jqc-1.12.4/jszip-3.10.1/dt-1.13.6/b-2.4.2/b-colvis-2.4.2/b-html5-2.4.2/b-print-2.4.2/fh-3.4.0/r-2.5.0/sc-2.2.0/sb-1.6.0/datatables.css" rel="stylesheet">
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
-    <script src="https://cdn.datatables.net/v/bs5/jqc-1.12.4/jszip-3.10.1/dt-1.13.6/b-2.4.2/b-colvis-2.4.2/b-html5-2.4.2/b-print-2.4.2/fh-3.4.0/r-2.5.0/sc-2.2.0/sb-1.6.0/datatables.js"></script>
-
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/linways/table-to-excel@v1.0.4/dist/tableToExcel.js"></script>
-
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
-
-    <style>
-        table.dataTable>tbody>tr {
-            /* display: inline-block; */
-            white-space: nowrap;
-            /* Prevent line breaks within the row */
-            margin-right: 10px;
-            height: auto;
-            /* Add spacing between rows if necessary */
-
-        }
-
-        #loader {
-      display: none;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 9999;
-    }
-
-        .custom-button {
-            padding: 8px 16px;
-            font-size: 14px;
-            background-color: blue;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .custom-button:hover {
-            background-color: darkblue;
-        }
-
-        thead {
-            border-top: none;
-            font-size: small;
-        }
-
-        tbody tr>td {
-            border-top: none;
-            font-size: small;
-        }
-
-        .toast-message {
-            color: black
-        }
-
-        .modal {
-            position: fixed;
-            top: -145px !important;
-            left: 0;
-            width: 100%;
-            height: 750px !important;
-            background-color: rgba(0, 0, 0, 0.7);
-        }
-
-        .modal-content {
-            background-color: #fefefe;
-            margin: 15% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-        }
-
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .close:hover {
-            color: black;
-        }
-
-        .ViewCommentsModal {
-            display: none;
-            position: fixed;
-            top: -138px;
-            left: 0;
-            width: 100%;
-            height: 220% !important;
-            background-color: rgba(0, 0, 0, 0.5);
-            align-items: center;
-            overflow: auto;
-        }
-
-        .modal-content {
-            background-color: #fff;
-            padding: 20px;
-            max-width: 80%;
-            max-height: 80%;
-            overflow-y: auto;
-            border-radius: 5px;
-        }
-
-        .close {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 20px;
-            cursor: pointer;
-        }
-
-
-        .comment-card {
-            border: 1px solid #ccc;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            /* Add more styling as needed */
-        }
-
-        .add-button {
-            top: 0;
-            right: 150px;
-            margin: 10px;
-            /* Adjust the margin as needed */
-        }
-
-        .button-container {
-            display: flex;
-            gap: 10px;
-            /* Adjust the gap as needed */
-        }
-
-        .label {
-            width: 21rem !important;
-
-        }
-
-        .md-6 {
-            display: flex;
-
-        }
-
-        .row {
-            display: flex !important;
-            margin-left: 0px !important;
-            margin-right: 0px !important;
-            align-items: center !important;
-
-        }
-
-        .form-control {
-            width: auto !important;
-            display: inline;
-        }
-    </style>
-
-
-    <script>
-        $(document).ready(function() {
-            $("#toggleCheckbox").change(function() {
-                if (this.checked) {
-                    $("#hiddenButton").show();
-                } else {
-                    $("#hiddenButton").hide();
-                }
-            });
-        });
-    </script>
-
-    
-
-
-
-
-    <script>
-        $(document).ready(function() {
-            $(".hamburger .hamburger__inner").click(function() {
-                $(".wrapper").toggleClass("active")
-            })
-
-            $(".top_navbar .fas").click(function() {
-                $(".profile_dd").toggleClass("active");
-            });
-        })
-    </script>
-
-
-
-    <script>
-        $(document).ready(function() {
-            var myTable; // Declare a variable to store the DataTable object
-
-
-            myTable = $('#dtHorizontalExample').DataTable({
-                "scrollX": true,
-
-
-                "select": {
-                    style: 'multi',
-                    selector: 'td:first-child input[type="checkbox"]'
-                },
-
-
-
-                "columnDefs": [{
-                    "targets": [3], // Assuming "Street" is the second column (index 1)
-                    "render": function(data, type, row) {
-                        if (type === 'display' && data != null && data.length > 20) {
-                            return `<span class="ellipsis">${data.substr(0, 20)}...</span>
-                            <span class="more-text" style="display: none;">${data}</span>
-                            <a href="" onclick="return false;" class="show-more">More</a>`;
-                        }
-                        return data;
-                    }
-                }],
-
-
-                dom: 'lBfrtip',
-                buttons: [
-                    'excel',
-                    'selectNone'
-                ],
-
-                // 'responsive': true,
-
-                processing: true,
-                serverSide: true,
-                autoWidth: false,
-                recordsTotal: 50,
-                ajax: {
-                    url: "{{ route('users') }}",
-                    data: function(d) {
-
-                        d.db = $('#db').val();
-                        d.search = $('#search').val();
-                        d.conference = $('#conference').val();
-                        d.country = $('#country').val();
-                        d.article = $('#article').val();
-                        d.user = $('#user').val();
-                        d.user_created_at = $('#user_created_at').val();
-                        d.user_updated_at = $('#user_updated_at').val();
-                        d.email_status = $('#email_status').val();
-
-
-
-
-
-                        var conference_id = $('#conference').val();
-
-                        var county_id = $('#country').val();
-
-                        var dba = $('#db').val();
-
-                        var search = d.search = $('#search').val();
-
-
-                        console.log(search);
-
-
-                    }
-                },
-
-                columns: [
-
-                    {
-                        title: '', // Empty title for the checkbox column
-                        data: null,
-                        orderable: false,
-                        searchable: false,
-                        defaultContent: '<input type="checkbox" class="checkbox"/>'
-                    },
-                    {
-                        title: 'S.no',
-                        data: 'id',
-                        "render": function(data, type, row, meta) {
-                            // 'meta.row' is the row index, 'meta.settings._iDisplayStart' is the page start index
-                            return meta.row + meta.settings._iDisplayStart + 1;
-                        }
-                    },
-
-                    {
-                        title: 'Conference Name',
-                        data: 'conference'
-
-                    },
-
-                    {
-                        title: 'Topic',
-                        data: 'article'
-                    },
-
-                    {
-                        title: 'Client Name',
-                        data: 'name'
-
-                    },
-
-                    
-                    {
-                        title: 'Email',
-                        data: 'email'
-
-                    },
-
-                    {
-                        title: 'Country',
-                        data: 'country'
-
-                    },
-
-
-                    {
-                        title: 'Email Status',
-                        data: 'email_sent_status'
-
-                    },
-
-
-
-                    {
-                        title: 'Email Sent Date',
-                        data: 'email_sent_date'
-
-                    },
-
-
-
-
-                    {
-                        title: 'Posted By',
-                        data: 'posted_by'
-
-                    },
-                    {
-                        title: 'Created Date',
-                        data: 'user_created_at'
-
-                    },
-                    {
-                        title: 'Updated Date',
-                        data: 'user_updated_at'
-                    },
-
-
-
-
-
-                    {
-                        title: 'Action',
-
-                        mData: '',
-                        render: (data, type, row) => {
-                            return `
-            <a  class="custom-button" href='{{ route('user.edit') }}/?id=${row.id}'>Edit</a>
-        `;
-                        },
-
-
-
-                    },
-                   
-
-                ],
-
-            });
-
-            $('.btn.btn-secondary.buttons-excel.buttons-html5').on('click', function() {
-                // Trigger the Excel export
-
-                $("#loader").show();
-
-
-                var columnNameToSearch = 'Email';
-
-                var columnIndex = myTable.column(':contains(' + columnNameToSearch + ')').index();
-                console.log(columnIndex);
-
-                var allData = myTable.rows().data().toArray();
-
-                var emails = allData.map(function(row) {
-                    return row['email'];
-                });
-
-
-                var csrfToken = $('meta[name="csrf-token"]').attr('content');
-
-                $.ajax({
-                    url: '{{route('download.email')}}',
-                    method: 'POST', // or 'GET' depending on your smoreerver-side implementation
-                    data: {
-                        _token: csrfToken, // Include the CSRF token in your data
-                        emails: emails
-                    },
-                    success: function(response) {
-                        // Handle the success response
-                        console.log(response);
-                    },
-                    error: function(error) {
-                        // Handle the error
-                        console.error(error);
-                    }
-                });
-
-
-
-            });
-
-
-
-            // myTable.buttons().disable();
-
-
-
-            // Array of specific headers you want to target
-            var specificHeaders = ['Industry', 'State', 'Country', 'conference Name'];
-
-            myTable.columns().every(function() {
-                var column = this;
-                var columnIndex = column.index();
-                var columnHeader = $(column.header()).text().trim(); // Get the header text
-
-                // Check if the current header matches one of the specific headers
-                // if (specificHeaders.includes(columnHeader)) {
-                //     var input = $('<input style="width:100px;" type="text" placeholder="Search..."/>')
-                //         .appendTo($(column.header()))
-                //         .on('keyup change', function() {
-                //             column.search(this.value).draw();
-                //             myTable.buttons().enable();
-                //         });
-                // }
-            });
-
-
-            $('#dtHorizontalExample').on('click', '.show-more', function() {
-                var $row = $(this).closest('tr');
-                var $moreText = $row.find('.more-text');
-                var $ellipsis = $row.find('.ellipsis');
-
-                $ellipsis.hide();
-                $moreText.show();
-                $(this).text('Less').removeClass('show-more').addClass('show-less');
-            });
-
-            $('#dtHorizontalExample').on('click', '.show-less', function() {
-                var $row = $(this).closest('tr');
-                var $moreText = $row.find('.more-text');
-                var $ellipsis = $row.find('.ellipsis');
-
-                $moreText.hide();
-                $ellipsis.show();
-                $(this).text('More').removeClass('show-less').addClass('show-more');
-            });
-
-            $('#search-btn').on('click', function(e) {
-
-                var selectedCountryId = $('#conference').val();
-
-
-                if (selectedCountryId === 'All') {
-                    $('#toggleCheckbox').prop('disabled', true);
-
-                    $("#hiddenButton").hide();
-
-                } else {
-                    $('#toggleCheckbox').prop('disabled', false);
-
-                }
-
-                console.log(name);
-
-                e.preventDefault(); // Prevent the default form submission behavior
-                myTable.ajax.reload();
-            });
-
-
-            $('#myTable').on('length.dt', function(e, settings, len) {
-                // Log the selected number of entries to the console
-                console.log('Show entries changed to:', len);
-            });
-
-            //         $('#toggleCheckbox').on('change', function() {
-
-
-            //             var tr = $(this).closest('tr');
-            //         var isSelected = this.checked;
-
-            //         // Toggle the selected class on the row
-            //         tr.toggleClass('selected', isSelected);
-            //             myTable.rows().nodes().to$().find('.checkbox').prop('checked', isSelected);
-
-            // // Toggle the selected class on all rows
-            // myTable.rows().nodes().to$().toggleClass('selected', isSelected);
-
-
-            //     });
-
-            // $('#dtHorizontalExample tbody').on('change', '.checkbox', function() {
-            //     // Uncheck "Select All" if any individual checkbox is unchecked
-            //     var tr = $(this).closest('tr');
-            //     var isSelected = this.checked;
-
-            //     // Toggle the selected class on the row
-            //     tr.toggleClass('selected', isSelected);
-
-            //     $("#hiddenButton").show();
-
-
-
-            // });
-
-
-            // Event listener for checkbox change
-            $('#dtHorizontalExample tbody').on('change', '.checkbox', function() {
-                var tr = $(this).closest('tr');
-                var isSelected = this.checked;
-
-                // Toggle the selected class on the row
-                tr.toggleClass('selected', isSelected);
-
-                // If "Select All" checkbox is clicked
-                if ($(this).hasClass('select-all')) {
-                    // Update all checkboxes in the table
-                    myTable.rows().nodes().to$().find('.checkbox').prop('checked', isSelected);
-
-                    // Toggle the selected class on all rows
-                    myTable.rows().nodes().to$().toggleClass('selected', isSelected);
-                } else {
-                    // Check the "Select All" checkbox if all checkboxes are checked
-                    var allCheckboxes = myTable.rows().nodes().to$().find('.checkbox');
-                    var allChecked = allCheckboxes.length === allCheckboxes.filter(':checked').length;
-                    myTable.rows().nodes().to$().find('.select-all').prop('checked', allChecked);
-                }
-
-                // Get the updated selected rows' data
-                var selectedData = myTable.rows('.selected').data().toArray();
-            });
-
-            // Event listener for "Select All" checkbox change
-            $('#toggleCheckbox').on('change', function() {
-                var isSelected = this.checked;
-
-                // Update all checkboxes in the table
-                myTable.rows().nodes().to$().find('.checkbox').prop('checked', isSelected);
-
-                // Toggle the selected class on all rows
-                myTable.rows().nodes().to$().toggleClass('selected', isSelected);
-            });
-
-
-
-
-            $('#searchButton').on('click', function(e) {
-                e.preventDefault(); // Prevent the default form submission behavior
-
-                myTable.ajax.reload();
-
-
-
-            });
-
-            $('#hiddenButton').on('click', function() {
-
-
-
-                var selectedData = myTable.rows('.selected').data().toArray();
-
-
-
-
-
-
-                // Now, filter the selectedData based on the checkbox status
-                console.log(selectedData);
-
-                var conference_id = $('#conference').val();
-
-                var routeUrl = "{{ route('user.sent.emails') }}"; // Replace 'your.route' with the actual route name
-
-                var csrfToken = $('meta[name="csrf-token"]').attr('content');
-
-
-                var selectedData = myTable.rows('.selected').data().toArray();
-
-
-                $.ajax({
-                    type: 'POST',
-                    url: routeUrl,
-                    headers: {
-                        'X-CSRF-TOKEN': csrfToken
-                    },
-                    data: {
-                        selectedData: selectedData,
-                        conference: conference_id,
-
-
-                    },
-                    success: function(response, status, xhr) {
-                        // Handle the response from the controller if needed
-
-
-                        // Create a Blob from the response
-                        var blob = new Blob([response], {
-                            type: 'text/csv'
-                        });
-
-                        // Create a link to download the file
-                        var link = document.createElement('a');
-                        link.href = window.URL.createObjectURL(blob);
-                        link.download = 'downloaded_data.csv';
-
-                        // Append the link to the body and trigger the download
-                        document.body.appendChild(link);
-                        link.click();
-
-                        // Remove the link from the body
-                        document.body.removeChild(link);
-
-
-
-                        var statusMessage = xhr.getResponseHeader('X-Status-Message');
-                        toastr.success(statusMessage);
-
-                        $("#toggleCheckbox").prop("checked", false);
-
-
-                    },
-                    error: function(xhr, status, error) {
-                        // Handle errors here
-                        console.error('Error downloading CSV file:', error);
-                    }
-                });
-            });
-
-
-
-
-
-        });
-    </script>
-
-
-    <script>
-        // Wait for the document to be ready
-        $(document).ready(function() {
-            // Attach a click event handler to the search button
-            $("#MainClearBtn").click(function(e) {
-                e.preventDefault();
-                var inputData = $('#search').val();
-                $('#search').val('');
-
-            });
-        });
-    </script>
-
-
-    <script>
-        // Wait for the document to be ready
-        $(document).ready(function() {
-            // Attach a click event handler to the search button
-            $("#Reset").click(function(e) {
-                alert();
-                e.preventDefault();
-                $('#form')[0].reset();
-            });
-        });
-    </script>
-
-
-
-
-    <script>
-        function resetSelect() {
-            alert();
-            // Get the select element by its id
-            var selectElement = document.getElementById('country');
-
-            // Set the selectedIndex to 0 to reset to the first option
-            selectElement.val().reset();
-        }
-    </script>
-
-
-
-    <script>
-        $(document).ready(function() {
-            // Set default selected value
-            //   var defaultCountry = 'all';
-
-            // Set the default value in the dropdown
-            var my = $('#country').val();
-
-            if (typeof my !== 'undefined') {
-
-                var my = $('#country').val();
-
-                $('#country').change();
-
-
-                var url = "{{ route('all-conferences', ['id' => 'id']) }}";
-                url = url.replace('id', my);
-
-                // Make an AJAX request to retrieve conference names based on the selected country
-                $.ajax({
-                    url: url, // Replace with your server-side script
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function(data) {
-                        // Update the conference list with the retrieved data
-                        $('#conference').html(displayconferenceNames(data.conferenceNames));
-                    },
-                    error: function(error) {
-                        console.error('Error fetching conference names:', error);
-                    }
-                });
-
-                $('#country').change(function() {
-                    // Get the selected country value
-                    var selectedCountry = $(this).val();
-
-                    var url = "{{ route('all-conferences', ['id' => 'id']) }}";
-                    url = url.replace('id', selectedCountry);
-
-                    // Make an AJAX request to retrieve conference names based on the selected country
-                    $.ajax({
-                        url: url, // Replace with your server-side script
-                        type: 'GET',
-                        dataType: 'json',
-                        success: function(data) {
-                            // Update the conference list with the retrieved data
-                            $('#conference').html(displayconferenceNames(data.conferenceNames));
-                        },
-                        error: function(error) {
-                            console.error('Error fetching conference names:', error);
-                        }
-                    });
-                });
-
-
-
-
-                function displayconferenceNames(conferenceNames) {
-                    var html = '<select id="conference" class="conference"> <option>All</option>';
-
-                    $.each(conferenceNames, function(index, conferenceName) {
-                        html += '<option>' + conferenceName + '</option>';
-                    });
-                    html += '</select>';
-                    return html;
-                }
-
-            } else {
-
-                // Listen for changes in the country dropdown
-                $('#country').change(function() {
-                    // Get the selected country value
-                    var selectedCountry = $(this).val();
-
-                    var url = "{{ route('all-conferences', ['id' => 'id']) }}";
-                    url = url.replace('id', selectedCountry);
-
-                    // Make an AJAX request to retrieve conference names based on the selected country
-                    $.ajax({
-                        url: url, // Replace with your server-side script
-                        type: 'GET',
-                        dataType: 'json',
-                        success: function(data) {
-                            // Update the conference list with the retrieved data
-                            $('#conference').html(displayconferenceNames(data.clientNames));
-                        },
-                        error: function(error) {
-                            console.error('Error fetching conference names:', error);
-                        }
-                    });
-                });
-
-                function displayconferenceNames(conferenceNames) {
-                    var html = '<select id="conference" class="conference">';
-
-                    $.each(conferenceNames, function(index, conferenceName) {
-                        html += '<option>' + conferenceName + '</option>';
-                    });
-                    html += '</select>';
-                    return html;
-                }
-
-            }
-
-            // Trigger the change event to make the AJAX request
-
-
-        });
-
-
-        $(document).ready(function() {
-            $('#conference').on('change', function() {
-
-
-
-                var selectedCountryId = $(this).val();
-                var selectedCountryName = $(this).find('option:selected').text();
-
-
-
-
-                if (selectedCountryId !== 'all_countries') {
-                    // Generate the URL using the Laravel route helper
-                    var url = "{{ route('all-articles', ['id' => 'id']) }}";
-                    url = url.replace('id', selectedCountryName);
-
-                    // Make an AJAX request to the generated URL
-                    $.ajax({
-                        url: url,
-                        type: 'GET',
-                        dataType: 'json', // Expect JSON response
-                        success: function(data) {
-
-                            // Update the result div with the received client names
-                            $('#article').html(displayClientNames(data.topicNames));
-                        },
-                        error: function(error) {
-                            // Handle errors if necessary
-                            console.log(error);
-                        }
-                    });
-                } else {
-                    // Handle the case when 'All' is selected
-                    $('#article').html('');
-                }
-            });
-
-            function displayClientNames(topicNames) {
-                var html = '<h2>Client Names:</h2><select><option value="All">All</option>';
-                $.each(topicNames, function(index, clientName) {
-                    html += '<option>' + clientName + '</option>';
-                });
-                html += '</select>';
-                return html;
-            }
-        });
-    </script>
-
-    <style>
-        .dtHorizontalExample td {
-            white-space: nowrap;
-        }
-
-        .custom-message {
-            color: green;
-            font-weight: bold;
-            /* Add any other styles you want */
-        }
-
-
-        select {
-            word-wrap: normal;
-            width: 150px;
-        }
-
-
-        .dtHorizontalExample tbody tr {
-            min-height: 3px;
-            /* or whatever height you need to make them all consistent */
-        }
-
-        .card {
-            width: auto !important;
-            top: 80px;
-
-        }
-
-        .alert {
-            width: fit-content;
-        }
-
-        /* Apply text wrapping to the first column */
-        #dtHorizontalExample td:first-child {
-            white-space: normal;
-            /* Enable text wrapping */
-        }
-
-        .text-wrap {
-            white-space: normal;
-        }
-
-        .width-200 {
-            width: 200px;
-        }
-    </style>
-</head>
-
-<div class="wrapper">
-    <div class="top_navbar">
-        <div class="hamburger">
-            <div class="hamburger__inner">
-                <div class="one"></div>
-                <div class="two"></div>
-                <div class="three"></div>
-            </div>
-        </div>
-        <div class="menu">
-            <div class="logo">
-                STRIPE
-            </div>
-            <div class="right_menu">
-                <ul>
-                    <li><i class="fas fa-user"></i>
-                        <div class="profile_dd">
-                            <div class="dd_item">Profile</div>
-                            <div class="dd_item">Change Password</div>
-                            <div class="dd_item" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
-                                    {{ __('Logout') }}
+<!DOCTYPE html>
+<html lang="en" class="semi-dark">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="icon" href="assets/images/favicon-32x32.png" type="image/png">
+        <!--plugins-->
+        <link href="public/assets/plugins/vectormap/jquery-jvectormap-2.0.2.css" rel="stylesheet">
+        <link href="public/assets/plugins/simplebar/css/simplebar.css" rel="stylesheet">
+        <link href="public/assets/plugins/perfect-scrollbar/css/perfect-scrollbar.css" rel="stylesheet">
+        <link href="public/assets/plugins/metismenu/css/metisMenu.min.css" rel="stylesheet">
+        <!-- Bootstrap CSS -->
+        <link href="public/assets/css/bootstrap.min.css" rel="stylesheet">
+        <link href="public/assets/css/bootstrap-extended.css" rel="stylesheet">
+        <link href="public/assets/css/style.css" rel="stylesheet">
+        <link href="public/assets/css/icons.css" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+        <!-- loader-->
+        <link href="public/assets/css/pace.min.css" rel="stylesheet">
+        <!--Theme Styles-->
+        <link href="public/assets/css/dark-theme.css" rel="stylesheet">
+        <link href="public/assets/css/light-theme.css" rel="stylesheet">
+        <link href="public/assets/css/semi-dark.css" rel="stylesheet">
+        <link href="public/assets/css/header-colors.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
+        <title>Stripe Conferences</title>
+        <style>
+      label {
+        margin-left: 20px;
+      }
+      #datepicker {
+        width: 180px;
+      }
+      #datepicker > span:hover {
+        cursor: pointer;
+      }
+        </style>
+    </head>
+    <body>
+        <!--start wrapper-->
+        <div class="wrapper">
+            <!--start top header-->
+            <header class="top-header">
+                <nav class="navbar navbar-expand gap-3">
+                    <div class="mobile-toggle-icon fs-3 d-flex d-lg-none">
+                        <i class="bi bi-list"></i>
+                    </div>
+                    <form class="searchbar">
+                        <div class="position-absolute top-50 translate-middle-y search-icon ms-3">
+                            <i class="bi bi-search"></i>
+                        </div>
+                        <input class="form-control" type="text" placeholder="Type here to search">
+                        <div class="position-absolute top-50 translate-middle-y search-close-icon">
+                            <i class="bi bi-x-lg"></i>
+                        </div>
+                    </form>
+                    <div class="top-navbar-right ms-auto">
+                        <ul class="navbar-nav align-items-center gap-1">
+                            <li class="nav-item search-toggle-icon d-flex d-lg-none">
+                                <a class="nav-link" href="javascript:;">
+                                    <div class="">
+                                        <i class="bi bi-search"></i>
+                                    </div>
                                 </a>
-
-                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                    @csrf
-                                </form>
+                            </li>
+                            <li class="nav-item dropdown dropdown-laungauge d-none d-sm-flex"></li>
+                            <li class="nav-item dark-mode d-none d-sm-flex">
+                                <a class="nav-link dark-mode-icon" href="javascript:;">
+                                    <div class="">
+                                        <i class="bi bi-moon-fill"></i>
+                                    </div>
+                                </a>
+                            </li>
+                            <li class="nav-item dropdown dropdown-large">
+                            </ul>
+                        </div>
+                        <div class="dropdown dropdown-user-setting">
+                            <a class="dropdown-toggle dropdown-toggle-nocaret" href="#" data-bs-toggle="dropdown">
+                                <div class="user-setting d-flex align-items-cente
+                      r gap-3">
+                                    <img src="public/assets/images/avatars/avatar-1.png" class="user-img" alt="">
+                                    <div class="d-none d-sm-block">
+                                        <p class="user-name mb-0">Welcome</p>
+                                        <small class="mb-0 dropdown-user-designation">Admin</small>
+                                    </div>
+                                </div>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                    <a class="dropdown-item" href="dashboard.html">
+                                        <div class="d-flex align-items-center">
+                                            <div class="">
+                                                <i class="bi bi-person-fill"></i>
+                                            </div>
+                                            <div class="ms-3">
+                                                <span>Home</span>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="profile.html">
+                                        <div class="d-flex align-items-center">
+                                            <div class="">
+                                                <i class="bi bi-gear-fill"></i>
+                                            </div>
+                                            <div class="ms-3">
+                                                <span>Profile</span>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">
+                                        <div class="d-flex align-items-center">
+                                            <div class="">
+                                                <i class="bi bi-lock-fill"></i>
+                                            </div>
+                                            <div class="ms-3">
+                                                <span>Logout</span>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </nav>
+                </header>
+                <!--end top header-->
+                <!--start sidebar -->
+                <aside class="sidebar-wrapper" data-simplebar="true">
+                    <div class="sidebar-header">
+                        <div>
+                            <img src="public/assets/images/logo.jpg" class="logo-icon" alt="logo icon">
+                        </div>
+                        <div>
+                            <h4 class="logo-text">Stripe</h4>
+                        </div>
+                        <div class="toggle-icon ms-auto">
+                            <i class="bi bi-list"></i>
+                        </div>
+                    </div>
+                    <!--navigation-->
+                    <ul class="metismenu" id="menu">
+                        <li>
+                            <a href="dashboard.html">
+                                <div class="parent-icon">
+                                    <i class="bi bi-house-fill"></i>
+                                </div>
+                                <div class="menu-title">Home</div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="javascript:;" class="has-arrow">
+                                <div class="parent-icon">
+                                    <i class="bi bi-grid-fill"></i>
+                                </div>
+                                <div class="menu-title">Conferences</div>
+                            </a>
+                            <ul>
+                                <li>
+                                    <a href="Add-new.html">
+                                        <i class="bi bi-circle"></i>
+                                        Add New
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="upload.html">
+                                        <i class="bi bi-circle"></i>
+                                        Upload
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="Conferences-list.html">
+                                        <i class="bi bi-circle"></i>
+                                        Conference List
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="javascript:;" class="has-arrow">
+                                <div class="parent-icon">
+                                    <i class="bi bi-person-lines-fill"></i>
+                                </div>
+                                <div class="menu-title">Status</div>
+                            </a>
+                            <ul>
+                                <li>
+                                    <a href="positive.html">
+                                        <i class="bi bi-circle"></i>
+                                        Positive
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="Negative.html">
+                                        <i class="bi bi-circle"></i>
+                                        Negative
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="follow-up.html">
+                                        <i class="bi bi-circle"></i>
+                                        Follow up
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="payment.html">
+                                        <i class="bi bi-circle"></i>
+                                        Wait for Payment
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="rejected.html">
+                                        <i class="bi bi-circle"></i>
+                                        Rejected
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="converted.html">
+                                        <i class="bi bi-circle"></i>
+                                        Converted
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="javascript:;" class="has-arrow">
+                                <div class="parent-icon">
+                                    <i class="bi bi-award-fill"></i>
+                                </div>
+                                <div class="menu-title">Speakers</div>
+                            </a>
+                            <ul>
+                                <li>
+                                    <a href="add-speaker.html">
+                                        <i class="bi bi-circle"></i>
+                                        Add Speaker
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="all-speakers.html">
+                                        <i class="bi bi-circle"></i>
+                                        All Speaker
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="timesheet.html">
+                                <div class="parent-icon">
+                                    <i class="bi bi-alarm-fill"></i>
+                                </div>
+                                <div class="menu-title">Timesheet</div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="report.html">
+                                <div class="parent-icon">
+                                    <i class="bi bi-bar-chart-line-fill"></i>
+                                </div>
+                                <div class="menu-title">Reports</div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="contact.html" target="_blank">
+                                <div class="parent-icon">
+                                    <i class="bi bi-telephone-fill"></i>
+                                </div>
+                                <div class="menu-title">Contact Us</div>
+                            </a>
+                        </li>
+                    </ul>
+                    <!--end navigation-->
+                </aside>
+            <!--end sidebar -->
+            <!--start content-->
+            <main class="page-content">
+                <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+                    <div class="fs-4 pe-3">Today's Conference</div>
+                    <div class="ms-auto">
+                        <div id="reportrange" style="
+                background: #fff;
+                cursor: pointer;
+                padding: 5px 10px;
+                border: 1px solid #ccc;
+                width: 100%;
+              ">
+                            <i class="fa fa-calendar"></i>
+                            &nbsp;
+                            <span></span>
+                            <i class="fa fa-caret-down"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="row row-cols-1 row-cols-lg-2 row-cols-xl-2 row-cols-xxl-4">
+                    <div class="col">
+                        <div class="card overflow-hidden rounded-4">
+                            <div class="card-body p-2">
+                                <div class="d-flex align-items-stretch justify-content-between rounded-4 overflow-hidden bg-pink p-4">
+                                    <div class="w-50 p-2">
+                                        <p class="text-white fs-6">All Conference</p>
+                                        <h4 class="text-white fs-1">52</h4>
+                                    </div>
+                                    <div class="w-50 p-3">
+                                        <p class="mb-3 text-white text-end">
+                                            <a href="#"></a>
+                                            View
+                                            <i class="bi bi-arrow-up-right-circle"></i>
+                                        </p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
-
-    <div class="main_container">
-        <div class="sidebar">
-            <div class="sidebar__inner">
-                <div class="profile">
-                    <div class="img">
-
-
-                        <img src="{{URL::asset('img/pic.png')}}" alt="profile_pic">
-
                     </div>
-                    <div class="profile_info">
-                        <p>Welcome</p>
-                        <p class="profile_name">
-
-                            @if(Auth::user())
-                            {{ Auth::user()->name }}
-                            @endif
-
-                        </p>
-                    </div>
-                </div>
-                <ul>
-
-
-                    <li>
-                        <a href="{{ route('home') }}" class="{{ ((Request::is('home')) ? 'active' : ' ') }}">
-                            <span class="icon"><i class="fas fa-dice-d6"></i></span>
-                            <span class="title">Home</span>
-                        </a>
-
-                    </li>
-
-
-
-                    <li>
-                        <a href="{{ route('show.conferences') }}" class="{{ ((Request::is('show.conferences')) ? 'active' : ' ') }}">
-
-
-                            <span class="icon"><i class="fas fa-dice-d6"></i></span>
-                            <span class="title">Conferences</span>
-                        </a>
-
-                    </li>
-
-                    <li>
-                        <a href="{{route('show.upload')}}" class="{{ ((Request::is('show-upload-form')) ? 'active' : ' ') }}">
-                            <span class="icon"><i class="fab fa-delicious"></i></span>
-                            <span class="title">Upload</span>
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="{{route('user.show.recentdata')}}" class="{{ ((Request::is('show-upload-form')) ? 'active' : ' ') }}">
-                            <span class="icon"><i class="fab fa-delicious"></i></span>
-                            <span class="title">Recent Data</span>
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="{{route('show.report')}}" class="{{ ((Request::is('show-report')) ? 'active' : ' ') }}">
-                            <span class="icon"><i class="fas fa-chart-pie"></i></span>
-                            <span class="title">Reports</span>
-                        </a>
-                    </li>
-
-                </ul>
-            </div>
-        </div>
-
-        <div class="container">
-
-
-
-            @yield('dashboard-content')
-
-
-
-
-
-        </div>
-
-        <div class="conatiner">
-            <div id="ViewCommentsModal" class="modal">
-
-                <!-- Modal content -->
-                <div class="modal-content">
-
-                    <div class="row">
-                        <form id="myForm" class="hidden">
-                            @csrf
-
-                            <div class="row">
-                                <div class="md-6">
-
-
-                                    <input type="text" id="articleInput" hidden>
-                                    <input type="text" id="conferenceInput" hidden>
-                                    <input type="text" id="emailInput" hidden>
-
-
-                                    <label class="label">Select Client Status</label>
-                                    <select class="custom-select" id="client_status_id">
-                                        <option>--select--</option>
-                                        <option value="">--Choose--</option>
-
-                                        <option value="1">Positive</option>
-                                        <option value="2">Negative</option>
-
-                                    </select>
+                    <div class="col">
+                        <div class="card overflow-hidden rounded-4">
+                            <div class="card-body p-2">
+                                <div class="d-flex align-items-stretch justify-content-between rounded-4 overflow-hidden bg-purple p-4">
+                                    <div class="w-50 p-2">
+                                        <p class="text-white fs-6">Collected Data</p>
+                                        <h4 class="text-white fs-1">15</h4>
+                                    </div>
+                                    <div class="w-50 p-3">
+                                        <p class="mb-3 text-white text-end">
+                                            <a href="#"></a>
+                                            View
+                                            <i class="bi bi-arrow-up-right-circle"></i>
+                                        </p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <span class="col-md-6">
-                                        <label>Write comment</label>
-                                        <input class="form-control" type="text" id="comment">
-                                    </span>
-                                </div>
-
                             </div>
-
-                        </form>
-                        <button class="add-button btn btn-primary btn-sm" id="showFormBtn">Add</button>
-
-                        <span class="close" onclick="closeViewModal()">&times;</span>
-
+                        </div>
                     </div>
-
-
-
-
-
-
-                    <div id="commentsContainer">
-                        <!-- Comments will be dynamically inserted here -->
+                    <div class="col">
+                        <div class="card overflow-hidden rounded-4">
+                            <div class="card-body p-2">
+                                <div class="d-flex align-items-stretch justify-content-between rounded-4 overflow-hidden bg-success p-4">
+                                    <div class="w-50 p-2">
+                                        <p class="text-white fs-6">Sent Mail</p>
+                                        <h4 class="text-white fs-1">05</h4>
+                                    </div>
+                                    <div class="w-50 p-3">
+                                        <p class="mb-3 text-white text-end">
+                                            <a href="#"></a>
+                                            View
+                                            <i class="bi bi-arrow-up-right-circle"></i>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card overflow-hidden rounded-4">
+                            <div class="card-body p-2">
+                                <div class="d-flex align-items-stretch justify-content-between rounded-4 overflow-hidden bg-orange p-4">
+                                    <div class="w-50 p-2">
+                                        <p class="text-white fs-6">Pending Mail</p>
+                                        <h4 class="text-white fs-1">100</h4>
+                                    </div>
+                                    <div class="w-50 p-3">
+                                        <p class="mb-3 text-white text-end">
+                                            <a href="#"></a>
+                                            View
+                                            <i class="bi bi-arrow-up-right-circle"></i>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
+                <!--end row-->
+                <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+                    <div class="fs-4 pe-3">Today's Mail</div>
+                    <div class="ms-auto">
+                        <div id="reportrange" style="
+                background: #fff;
+                cursor: pointer;
+                padding: 5px 10px;
+                border: 1px solid #ccc;
+                width: 100%;
+              ">
+                            <i class="fa fa-calendar"></i>
+                            &nbsp;
+                            <span></span>
+                            <i class="fa fa-caret-down"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="row row-cols-1 row-cols-lg-2 row-cols-xl-2 row-cols-xxl-4">
+                    <div class="col">
+                        <div class="card overflow-hidden rounded-4">
+                            <div class="card-body p-2">
+                                <div class="d-flex align-items-stretch justify-content-between rounded-4 overflow-hidden bg-pink p-4">
+                                    <div class="w-50 p-2">
+                                        <p class="text-white fs-6">Sent</p>
+                                        <h4 class="text-white fs-1">50</h4>
+                                    </div>
+                                    <div class="w-50 p-3">
+                                        <p class="mb-3 text-white text-end">
+                                            <a href="#"></a>
+                                            View
+                                            <i class="bi bi-arrow-up-right-circle"></i>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card overflow-hidden rounded-4">
+                            <div class="card-body p-2">
+                                <div class="d-flex align-items-stretch justify-content-between rounded-4 overflow-hidden bg-purple p-4">
+                                    <div class="w-50 p-2">
+                                        <p class="text-white fs-6">Pending</p>
+                                        <h4 class="text-white fs-1">15</h4>
+                                    </div>
+                                    <div class="w-50 p-3">
+                                        <p class="mb-3 text-white text-end">
+                                            <a href="#"></a>
+                                            View
+                                            <i class="bi bi-arrow-up-right-circle"></i>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card overflow-hidden rounded-4">
+                            <div class="card-body p-2">
+                                <div class="d-flex align-items-stretch justify-content-between rounded-4 overflow-hidden bg-success p-4">
+                                    <div class="w-50 p-2">
+                                        <p class="text-white fs-6">Positive</p>
+                                        <h4 class="text-white fs-1">05</h4>
+                                    </div>
+                                    <div class="w-50 p-3">
+                                        <p class="mb-3 text-white text-end">
+                                            <a href="#"></a>
+                                            View
+                                            <i class="bi bi-arrow-up-right-circle"></i>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card overflow-hidden rounded-4">
+                            <div class="card-body p-2">
+                                <div class="d-flex align-items-stretch justify-content-between rounded-4 overflow-hidden bg-orange p-4">
+                                    <div class="w-50 p-2">
+                                        <p class="text-white fs-6">Negative</p>
+                                        <h4 class="text-white fs-1">0</h4>
+                                    </div>
+                                    <div class="w-50 p-3">
+                                        <p class="mb-3 text-white text-end">
+                                            <a href="#"></a>
+                                            View
+                                            <i class="bi bi-arrow-up-right-circle"></i>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--end row-->
+                <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+                    <div class="fs-4 pe-3">Today's Lead Pipelines</div>
+                    <div class="ms-auto">
+                        <div id="reportrange" style="
+                background: #fff;
+                cursor: pointer;
+                padding: 5px 10px;
+                border: 1px solid #ccc;
+                width: 100%;
+              ">
+                            <i class="fa fa-calendar"></i>
+                            &nbsp;
+                            <span></span>
+                            <i class="fa fa-caret-down"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="row row-cols-1 row-cols-lg-2 row-cols-xl-2 row-cols-xxl-4">
+                    <div class="col">
+                        <div class="card overflow-hidden rounded-4">
+                            <div class="card-body p-2">
+                                <div class="d-flex align-items-stretch justify-content-between rounded-4 overflow-hidden bg-pink p-4">
+                                    <div class="w-50 p-2">
+                                        <p class="text-white fs-6">Follow Up</p>
+                                        <h4 class="text-white fs-1">50</h4>
+                                    </div>
+                                    <div class="w-50 p-3">
+                                        <p class="mb-3 text-white text-end">
+                                            <a href="#"></a>
+                                            View
+                                            <i class="bi bi-arrow-up-right-circle"></i>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card overflow-hidden rounded-4">
+                            <div class="card-body p-2">
+                                <div class="d-flex align-items-stretch justify-content-between rounded-4 overflow-hidden bg-purple p-4">
+                                    <div class="w-50 p-2">
+                                        <p class="text-white fs-6">Converted</p>
+                                        <h4 class="text-white fs-1">15</h4>
+                                    </div>
+                                    <div class="w-50 p-3">
+                                        <p class="mb-3 text-white text-end">
+                                            <a href="#"></a>
+                                            View
+                                            <i class="bi bi-arrow-up-right-circle"></i>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card overflow-hidden rounded-4">
+                            <div class="card-body p-2">
+                                <div class="d-flex align-items-stretch justify-content-between rounded-4 overflow-hidden bg-success p-4">
+                                    <div class="w-50 p-2">
+                                        <p class="text-white fs-6">Rejected</p>
+                                        <h4 class="text-white fs-1">05</h4>
+                                    </div>
+                                    <div class="w-50 p-3">
+                                        <p class="mb-3 text-white text-end">
+                                            <a href="#"></a>
+                                            View
+                                            <i class="bi bi-arrow-up-right-circle"></i>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card overflow-hidden rounded-4">
+                            <div class="card-body p-2">
+                                <div class="d-flex align-items-stretch justify-content-between rounded-4 overflow-hidden bg-orange p-4">
+                                    <div class="w-50 p-2">
+                                        <p class="text-white fs-6">Payment Status</p>
+                                        <h4 class="text-white fs-1">100</h4>
+                                    </div>
+                                    <div class="w-50 p-3">
+                                        <p class="mb-3 text-white text-end">
+                                            <a href="#"></a>
+                                            View
+                                            <i class="bi bi-arrow-up-right-circle"></i>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 d-flex">
+                        <div class="card rounded-4 w-100">
+                            <div class="card-header bg-transparent border-0">
+                                <div class="row g-3 align-items-center">
+                                    <div class="col-lg-12">
+                                        <h6 class="mb-0 fs-2 fw-bold">All Conferences</h6>
+                                    </div>
+                                    <!-- <div class="col">
+                    <div
+                      class="d-flex align-items-center justify-content-end gap-3 cursor-pointer"
+                    >
+                      <div class="dropdown">
+                        <a
+                          class="dropdown-toggle dropdown-toggle-nocaret"
+                          href="#"
+                          data-bs-toggle="dropdown"
+                          aria-expanded="false"
+                        >
+                          <i
+                            class="bx bx-dots-horizontal-rounded font-22 text-option"
+                          ></i>
+                        </a>
+                        <ul class="dropdown-menu">
+                          <li>
+                            <a class="dropdown-item" href="javascript:;"
+                              >Action</a
+                            >
+                          </li>
+                          <li>
+                            <a class="dropdown-item" href="javascript:;"
+                              >Another action</a
+                            >
+                          </li>
+                          <li>
+                            <hr class="dropdown-divider" />
+                          </li>
+                          <li>
+                            <a class="dropdown-item" href="javascript:;"
+                              >Something else here</a
+                            >
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div> -->
+                                </div>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="best-product p-2 mb-3">
+                                    <div class="best-product-item">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div class="product-box border">
+                                                <span class="badge bg-primary">1</span>
+                                            </div>
+                                            <div class="product-info flex-grow-1">
+                                                <p class="product-name mb-0 mt-2 fs-5">
+                                                    Cancer Oncology Conference
+                                                    <span class="float-end">95%</span>
+                                                </p>
+                                                <div class="progress-wrapper">
+                                                    <div class="progress" style="height: 5px;">
+                                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 80%;"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="best-product-item">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div class="product-box border">
+                                                <span class="badge bg-primary">2</span>
+                                            </div>
+                                            <div class="product-info flex-grow-1">
+                                                <p class="product-name mb-0 mt-2 fs-5">
+                                                    Neurology Alzheimers Disease
+                                                    <span class="float-end">75%</span>
+                                                </p>
+                                                <div class="progress-wrapper">
+                                                    <div class="progress" style="height: 5px;">
+                                                        <div class="progress-bar bg-danger" role="progressbar" style="width: 70%;"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="best-product-item">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div class="product-box border">
+                                                <span class="badge bg-primary">3</span>
+                                            </div>
+                                            <div class="product-info flex-grow-1">
+                                                <p class="product-name mb-0 mt-2 fs-5">
+                                                    Renewable Energys & Sustainable Development
+                                                    <span class="float-end">65%</span>
+                                                </p>
+                                                <div class="progress-wrapper">
+                                                    <div class="progress" style="height: 5px;">
+                                                        <div class="progress-bar bg-success" role="progressbar" style="width: 60%;"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="best-product-item">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div class="product-box border">
+                                                <span class="badge bg-primary">4</span>
+                                            </div>
+                                            <div class="product-info flex-grow-1">
+                                                <p class="product-name mb-0 mt-2 fs-5">
+                                                    Traditional Alternative Medicine
+                                                    <span class="float-end">55%</span>
+                                                </p>
+                                                <div class="progress-wrapper">
+                                                    <div class="progress" style="height: 5px;">
+                                                        <div class="progress-bar bg-orange" role="progressbar" style="width: 50%;"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="best-product-item">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div class="product-box border">
+                                                <span class="badge bg-primary">5</span>
+                                            </div>
+                                            <div class="product-info flex-grow-1">
+                                                <p class="product-name mb-0 mt-2 fs-5">
+                                                    Medical Health Pharmaceutical Industry
+                                                    <span class="float-end">45%</span>
+                                                </p>
+                                                <div class="progress-wrapper">
+                                                    <div class="progress" style="height: 5px;">
+                                                        <div class="progress-bar bg-purple" role="progressbar" style="width: 40%;"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="best-product-item">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div class="product-box border">
+                                                <span class="badge bg-primary">6</span>
+                                            </div>
+                                            <div class="product-info flex-grow-1">
+                                                <p class="product-name mb-0 mt-2 fs-5">
+                                                    Cell Science Molecular Biology
+                                                    <span class="float-end">35%</span>
+                                                </p>
+                                                <div class="progress-wrapper">
+                                                    <div class="progress" style="height: 5px;">
+                                                        <div class="progress-bar bg-info" role="progressbar" style="width: 30%;"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="best-product-item">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div class="product-box border">
+                                                <span class="badge bg-primary">7</span>
+                                            </div>
+                                            <div class="product-info flex-grow-1">
+                                                <p class="product-name mb-0 mt-2 fs-5">
+                                                    Food Technology Nutrition
+                                                    <span class="float-end">25%</span>
+                                                </p>
+                                                <div class="progress-wrapper">
+                                                    <div class="progress" style="height: 5px;">
+                                                        <div class="progress-bar bg-pink" role="progressbar" style="width: 20%;"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="best-product-item">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div class="product-box border">
+                                                <span class="badge bg-primary">8</span>
+                                            </div>
+                                            <div class="product-info flex-grow-1">
+                                                <p class="product-name mb-0 mt-2 fs-5">
+                                                    Nursing, Midwifery Womens Health
+                                                    <span class="float-end">15%</span>
+                                                </p>
+                                                <div class="progress-wrapper">
+                                                    <div class="progress" style="height: 5px;">
+                                                        <div class="progress-bar bg-dark" role="progressbar" style="width: 10%;"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+            <a href="javaScript:;" class="back-to-top">
+                <i class="bx bxs-up-arrow-alt"></i>
+            </a>
         </div>
-
-
-
-
-
-    </div>
-
-
-
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            // Add an event listener to the button
-            document.getElementById("showFormBtn").addEventListener("click", function() {
-                // Get the form element
-                var form = document.getElementById("myForm");
-
-                // Toggle the "hidden" class to show/hide the form
-                form.classList.toggle("hidden");
-
-                // Change the button text from "Add" to "Save"
-                var buttonText = this.innerText;
-                this.innerText = buttonText === "Add" ? "Save" : "Add";
-            });
-        });
-
-        function saveForm() {
-            var formData = $('#myForm').serialize(); // Serialize form data
-            const article_id = $('#articleInput').val();
-            const email_id = $('#emailInput').val();
-            const conference_id = $('#conferenceInput').val();
-            const client_status_id = $('#client_status_id').val();
-            const comment = $('#comment').val();
-
-
-
-
-
-            $.ajax({
-                type: 'POST',
-                url: '{{route('user.add.comments')}}',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                data: {
-                    article: article_id,
-                    email: email_id,
-                    client_status_id: client_status_id,
-                    comment: comment,
-                    conference: conference_id,
-
-                },
-                success: function(response) {
-                    // Handle success, if needed
-                    console.log(response);
-                    toastr.success(response.message);
-
-                    $('#client_status_id').val('');
-                    $('#comment').val('');
-
-
-                    updateModalContent(response.comments);
-
-
-                    // If submission is successful, hide the form and change button text back to "Add"
-                    $('#myForm').addClass('hidden');
-                    $('#showFormBtn').text('Add');
-                },
-                error: function(xhr, status, error) {
-
-                    var errors = xhr.responseJSON.errors;
-                    handleValidationErrors(errors);
-                },
-            });
-        }
-
-        function handleValidationErrors(errors) {
-            // Display validation errors as toasts
-            for (var field in errors) {
-                if (errors.hasOwnProperty(field)) {
-                    toastr.error(errors[field][0]);
+        <!--end wrapper-->
+        <!-- Bootstrap bundle JS -->
+        <script src="public/assets/js/bootstrap.bundle.min.js"></script>
+        <!--plugins-->
+        <script src="public/assets/js/jquery.min.js"></script>
+        <script src="public/assets/plugins/simplebar/js/simplebar.min.js"></script>
+        <script src="public/assets/plugins/metismenu/js/metisMenu.min.js"></script>
+        <script src="public/assets/plugins/perfect-scrollbar/js/perfect-scrollbar.js"></script>
+        <script src="public/assets/plugins/vectormap/jquery-jvectormap-2.0.2.min.js"></script>
+        <script src="public/assets/plugins/vectormap/jquery-jvectormap-world-mill-en.js"></script>
+        <script src="public/assets/js/pace.min.js"></script>
+        <script src="public/assets/plugins/chartjs/js/Chart.min.js"></script>
+        <script src="public/assets/plugins/chartjs/js/Chart.extension.js"></script>
+        <script src="public/assets/plugins/apexcharts-bundle/js/apexcharts.min.js"></script>
+        <!--app-->
+        <script src="public/assets/js/app.js"></script>
+        <script src="public/assets/js/index4.js"></script>
+        <script>
+    new PerfectScrollbar(".best-product")
+        </script>
+        <!-- Datepicker js -->
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+        <script type="text/javascript">
+            $(function() {
+            
+                var start = moment().subtract(29, 'days');
+                var end = moment();
+            
+                function cb(start, end) {
+                    $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
                 }
-            }
-        }
-
-
-        // Add an event listener to the "Save" button
-        document.getElementById("showFormBtn").addEventListener("click", function() {
-            // Check if the button text is "Save" and submit the form if it is
-            if (this.innerText === "Save") {
-                saveForm();
-            }
-        });
-    </script>
-
-
-    <script>
-        function openViewModal() {
-            var viewmodal = document.getElementById('ViewCommentsModal');
-            viewmodal.style.display = 'block';
-        }
-
-        function closeViewModal() {
-            var viewmodal = document.getElementById('ViewCommentsModal');
-            viewmodal.style.display = 'none';
-        }
-
-
-        // Function to update modal content with comments
-        function updateModalContent(comments) {
-            // Get the comments container
-            var commentsContainer = document.getElementById('commentsContainer');
-
-            // Clear existing content
-            commentsContainer.innerHTML = '';
-
-            // Iterate through comments and append them to the container
-            comments.forEach(comment => {
-                // Create a card element for each comment
-                var cardDiv = document.createElement('div');
-                cardDiv.classList.add('comment-card'); // Add a CSS class for styling if needed
-
-                cardDiv.innerHTML = `
-        <p><b>Client Status:</b> <span style="margin-right:50px" id="clientStatus${comment.id}">${comment.name}</span>
-    
-        <span style="margin-right:50px"> <b> Email:</b> ${comment.email} </span>
-       <span style="margin-right:50px"> <b> Date:</b> ${comment.comment_created_date} </span>
-        </p>
-          <b> Comment: </b> ${comment.comment}
-        </p>
-
-        `;
-
-                var clientStatusSpan = cardDiv.querySelector(`#clientStatus${comment.id}`);
-                if (comment.name === 'Positive') {
-                    clientStatusSpan.style.color = 'green';
-                    // Add more styles as needed
-                } else if (comment.name === 'Negative') {
-                    clientStatusSpan.style.color = 'red';
-                    // Add more styles as needed
-                }
-
-
-                // Append the card to the container
-                commentsContainer.appendChild(cardDiv);
+            
+                $('#reportrange').daterangepicker({
+                    startDate: start,
+                    endDate: end,
+                    ranges: {
+                       'Today': [moment(), moment()],
+                       'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                       'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                       'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                       'This Month': [moment().startOf('month'), moment().endOf('month')],
+                       'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                    }
+                }, cb);
+            
+                cb(start, end);
+            
             });
-        }
-
-
-
-        function makeAjaxCall(conference, article, email) {
-            const url = `comments?conference=${conference}&article=${article}&email=${email}`;
-
-            // Make an AJAX request to fetch comments
-            fetch(url) // Update the URL to your actual API endpoint
-                .then(response => response.json())
-                .then(data => {
-
-                    console.log(data.comments[0].article);
-                    document.getElementById('articleInput').value = data.comments[0].article;
-                    document.getElementById('conferenceInput').value = data.comments[0].conference;
-                    document.getElementById('emailInput').value = data.comments[0].email;
-
-                    // Update the modal content with comments
-                    updateModalContent(data.comments);
-                })
-                .catch(error => console.error('Error fetching comments:', error));
-
-            // Display the modal
-            document.getElementById('ViewCommentsModal').style.display = 'block';
-        }
-
-        function makeAjaxCall2(conference, article, email) {
-            // Assuming you are using the XMLHttpRequest object for AJAX
-            var xhr = new XMLHttpRequest();
-
-            console.log(conference, article, email);
-
-
-            const url = `comments?conference=${conference}&article=${article}&email=${email}`;
-
-            // Configure the AJAX request
-            xhr.open('GET', url, true);
-
-            // Set up a callback function to handle the response
-            xhr.onload = function(response) {
-
-                console.log(response);
-                if (xhr.status == 200) {
-                    // If the AJAX request is successful, call openModal()
-                    openViewModal();
-                } else {
-                    // Handle errors if the AJAX request fails
-                    console.error('AJAX request failed');
-                }
-            };
-
-            // Send the AJAX request
-            xhr.send();
-        }
-
-        // Call the makeAjaxCall() function to initiate the AJAX request
-    </script>
+        </script>
+    </body>
+</html>

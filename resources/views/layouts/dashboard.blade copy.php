@@ -5,6 +5,9 @@
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 
 
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
     
     <!-- SideBar-Menu CSS -->
 
@@ -201,6 +204,8 @@
             });
         });
     </script>
+
+    
 
 
 
@@ -1005,6 +1010,13 @@
                         <a href="{{route('show.upload')}}" class="{{ ((Request::is('show-upload-form')) ? 'active' : ' ') }}">
                             <span class="icon"><i class="fab fa-delicious"></i></span>
                             <span class="title">Upload</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{{route('user.show.recentdata')}}" class="{{ ((Request::is('show-upload-form')) ? 'active' : ' ') }}">
+                            <span class="icon"><i class="fab fa-delicious"></i></span>
+                            <span class="title">Recent Data</span>
                         </a>
                     </li>
 
