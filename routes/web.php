@@ -5,6 +5,7 @@ use App\Http\Controllers\CsvController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ConferenceController;
 use App\Http\Controllers\SuperAdminController;
+use App\Http\Controllers\User\ConferenceController as UserConferenceController;
 
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\HomeController;
@@ -44,7 +45,6 @@ Route::middleware(['checkUserRole'])->group(function () {
     Route::post('/download-emails', [App\Http\Controllers\UserController::class, 'downloadEmails'])->name('download.email');
     // Route::view('/upload', 'upload-form'); // Display the form
     Route::post('upload',[CsvController::class,'upload'])->name('user.upload');
-    Route::any('show-upload-form',[CsvController::class,'show'])->name('show.upload');
     Route::get('/upload-csv-progress', [CsvController::class,'progress'])->name('progress');
     Route::any('/all-conferences/{id}', [App\Http\Controllers\HomeController::class,'allClients'])->name('all-conferences');
     Route::any('/all-articles/{id}', [App\Http\Controllers\HomeController::class,'allTopics'])->name('all-articles');
@@ -55,6 +55,18 @@ Route::middleware(['checkUserRole'])->group(function () {
 
     Route::get('todaydata/index', [App\Http\Controllers\HomeController::class,'todayData'])->name('user.all.todaydata');
     Route::get('show-recent-data', [App\Http\Controllers\HomeController::class,'ShowtodayData'])->name('user.show.recentdata');
+
+
+    //conference routes
+
+    Route::get('user/add-conference', [UserConferenceController::class, 'add'])->name('user.add.conference');
+
+    Route::get('user/show-conferences', [UserConferenceController::class, 'index'])->name('user.showall.conferences');
+
+
+
+
+    Route::any('user/show-upload-form',[UserConferenceController::class,'showUpload'])->name('user.show.upload');
 
     
 
