@@ -447,6 +447,12 @@
                     headers: {
                         'X-CSRF-TOKEN': csrfToken
                     },
+                    data: {
+                        selectedData: selectedData,
+                        conference: conference_id,
+
+
+                    },
                    
                     success: function(response, status, xhr) {
                         // Handle the response from the controller if needed
