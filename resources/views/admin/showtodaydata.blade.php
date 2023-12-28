@@ -457,10 +457,7 @@
                     success: function(response, status, xhr) {
                         // Handle the response from the controller if needed
                         console.log(response);
-
-                        var statusMessage = xhr.getResponseHeader('X-Status-Message');
-                        console.log(response);
-                        toastr.success(statusMessage);
+                        toastr.success("Data Moved Successfully");
 
 
 

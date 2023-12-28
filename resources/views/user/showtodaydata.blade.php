@@ -457,27 +457,8 @@
                         // Handle the response from the controller if needed
 
 
-                        // Create a Blob from the response
-                        var blob = new Blob([response], {
-                            type: 'text/csv'
-                        });
 
-                        // Create a link to download the file
-                        var link = document.createElement('a');
-                        link.href = window.URL.createObjectURL(blob);
-                        link.download = 'downloaded_data.csv';
-
-                        // Append the link to the body and trigger the download
-                        document.body.appendChild(link);
-                        link.click();
-
-                        // Remove the link from the body
-                        document.body.removeChild(link);
-
-
-
-                        var statusMessage = xhr.getResponseHeader('X-Status-Message');
-                        toastr.success(statusMessage);
+                        toastr.success("Data Moved Successfully");
 
                         $("#toggleCheckbox").prop("checked", false);
 
