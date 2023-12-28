@@ -94,118 +94,117 @@ class HomeController extends Controller
     public function updateData(Request $request)
     {
 
-        if (isset($request->selectedData)) {
-            ini_set('memory_limit', '1024M');
-            $today = Carbon::today();
-            $formattedDate = $today->format('Y-m-d');
-            $now = Carbon::now();
-            $auth_user_id = Auth::user()->id;
-            $currentDateTime = $now->toDateString();
-            $todayData = $request->selectedData;
-            $masterData = Conference::all();
-
-
-
-
-
-
-            $progress = 0;
-            $totalRecords = count($todayData);
-            $recordsProcessed = 0;
-
-
-            foreach ($todayData as $record) {
-
-
-
-                // Check if the record exists in the master table
-                $existingRecord = $masterData
-                    ->where('email', $record['email'])
-                    ->where('conference', $record['conference'])
-                    ->where('article', $record['article'])->first();
-
-                if ($existingRecord) {
-                    // Update the record
-                    $existingRecord->update([
-
-                        'name' => $record['name'],
-                        'email' => $record['email'],
-                        'article' => $record['article'],
-                        // 'conference' => $row['Conference'],
-                        'conference' => $record['conference'],
-                        'country' => $record['country'],
-                        'user_id' => $auth_user_id,
-                        'user_created_at' => $currentDateTime,
-                        'email_sent_date' => null,
-                        'email_sent_status' => $record['email_sent_status'],
-                        'moved_by' => $auth_user_id,
-                        // Update fields as needed
-                    ]);
-
-
-                    $conference = htmlspecialchars_decode($record['conference']);
-                    $delete_record = ConferencesToday::where('email', $record['email'])
-                        ->where('conference', $conference)
+        try{
+            if (isset($request->selectedData)) {
+                ini_set('memory_limit', '1024M');
+                $today = Carbon::today();
+                $formattedDate = $today->format('Y-m-d');
+                $now = Carbon::now();
+                $auth_user_id = Auth::user()->id;
+                $currentDateTime = $now->toDateString();
+                $todayData = $request->selectedData;
+                $masterData = Conference::all();
+    
+    
+    
+    
+                $progress = 0;
+                $totalRecords = count($todayData);
+                $recordsProcessed = 0;
+    
+    
+                foreach ($todayData as $record) {
+    
+    
+    
+                    // Check if the record exists in the master table
+                    $existingRecord = $masterData
+                        ->where('email', $record['email'])
+                        ->where('conference', $record['conference'])
                         ->where('article', $record['article'])->first();
-
-                    if ($delete_record) {
-                        $delete_record->delete();
+    
+                    if ($existingRecord) {
+                        // Update the record
+                        $existingRecord->update([
+    
+                            'name' => $record['name'],
+                            'email' => $record['email'],
+                            'article' => $record['article'],
+                            // 'conference' => $row['Conference'],
+                            'conference' => $record['conference'],
+                            'country' => $record['country'],
+                            'user_id' => $auth_user_id,
+                            'user_created_at' => $currentDateTime,
+                            'email_sent_date' => null,
+                            'email_sent_status' => $record['email_sent_status'],
+                            'moved_by' => $auth_user_id,
+                            // Update fields as needed
+                        ]);
+    
+    
+                        $conference = htmlspecialchars_decode($record['conference']);
+                        $delete_record = ConferencesToday::where('email', $record['email'])
+                            ->where('conference', $conference)
+                            ->where('article', $record['article'])->first();
+    
+                        if ($delete_record) {
+                            $delete_record->delete();
+                        }
+                    } else {
+                        // Insert the record
+                        Conference::create([
+                            'name' => $record['name'],
+                            'email' => $record['email'],
+                            'article' => $record['article'],
+                            // 'conference' => $row['Conference'],
+                            'conference' => $record['conference'],
+                            'country' => $record['country'],
+                            'user_id' => $auth_user_id,
+                            'user_created_at' => $currentDateTime,
+                            'email_sent_date' => null,
+                            'email_sent_status' => $record['email_sent_status'],
+                            'moved_by' => $auth_user_id,
+                        ]);
+    
+    
+    
+    
+    
+                        $conference = htmlspecialchars_decode($record['conference']);
+                        $delete_record = ConferencesToday::where('email', $record['email'])
+                            ->where('conference', $conference)
+                            ->where('article', $record['article'])->first();
+    
+                        if ($delete_record) {
+                            $delete_record->delete();
+                        }
                     }
-                } else {
-                    // Insert the record
-                    Conference::create([
-                        'name' => $record['name'],
-                        'email' => $record['email'],
-                        'article' => $record['article'],
-                        // 'conference' => $row['Conference'],
-                        'conference' => $record['conference'],
-                        'country' => $record['country'],
-                        'user_id' => $auth_user_id,
-                        'user_created_at' => $currentDateTime,
-                        'email_sent_date' => null,
-                        'email_sent_status' => $record['email_sent_status'],
-                        'moved_by' => $auth_user_id,
-                    ]);
-
-
-
-
-
-                    $conference = htmlspecialchars_decode($record['conference']);
-                    $delete_record = ConferencesToday::where('email', $record['email'])
-                        ->where('conference', $conference)
-                        ->where('article', $record['article'])->first();
-
-                    if ($delete_record) {
-                        $delete_record->delete();
-                    }
+    
+    
+    
+    
+                    $recordsProcessed++;
+                    $progress = round(($recordsProcessed / $totalRecords) * 100);
+    
+                    // Send progress to frontend
+                    // echo "data: $progress\n\n";
+                    // ob_flush();
+                    // flush();
+                    // usleep(100000);
                 }
-
-
-
-
-
-
-
-
-
-                $recordsProcessed++;
-                $progress = round(($recordsProcessed / $totalRecords) * 100);
-
-                // Send progress to frontend
-                echo "data: $progress\n\n";
-                ob_flush();
-                flush();
-                usleep(100000);
-            }
-            // Ensure that the final progress is 100%
-            echo "data: 100\n\n";
-            ob_flush();
-            flush();
-
-            return response()->json(['message' => 'Data updated successfully']);
-        } else {
+                // Ensure that the final progress is 100%
+                // echo "data: 100\n\n";
+                // ob_flush();
+                // flush();
+    
+                return response()->json(['message' => 'Data updated successfully']);
+            } 
         }
+        catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+
+       
     }
 
 

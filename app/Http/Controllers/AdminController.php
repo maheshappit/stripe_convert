@@ -1007,10 +1007,11 @@ class AdminController extends Controller
         }
         // Add more scenarios as needed...
 
+
         return Datatables::of($query)
             ->addIndexColumn()
             ->addColumn('posted_by', function ($row) {
-                return $row->postedby->name ?? '';
+                return $row->postedby->name;
             })
             ->rawColumns(['posted_by'])
             ->make(true);
@@ -1018,6 +1019,7 @@ class AdminController extends Controller
 
     public function updateData(Request $request)
     {
+
 
         if (isset($request->selectedData)) {
             ini_set('memory_limit', '1024M');
@@ -1386,7 +1388,8 @@ class AdminController extends Controller
 
     public function upload(Request $request)
     {
-
+        
+        try {
         $now = Carbon::now();
 
 
@@ -1443,13 +1446,12 @@ class AdminController extends Controller
                 // If the record exists, update it
                 $model->update([
                     'name' => $row['Name'],
-                    // 'email' => $row['Email'],
-                    // 'article' => $row['Article'],
-                    // 'conference' => $row['Conference'],
+                    'email' => $row['Email'],
+                    'article' => $row['Article'],
+                    'conference' => $row['Conference'],
                     'country' => $row['Country'],
-
                     'user_id' => $request->user()->id,
-
+                    'email_sent_status'=>$request->email_sent_status,
                     'user_updated_at' => $currentDateTime,
                     // 'updated_at'=>'',
                 ]);
@@ -1468,6 +1470,8 @@ class AdminController extends Controller
                     'user_id' => $request->user()->id,
 
                     'user_created_at' => $currentDateTime,
+                    'email_sent_status'=>$request->email_sent_status,
+
                     // 'updated_at'=>'',
 
                 ]);
@@ -1487,6 +1491,12 @@ class AdminController extends Controller
             'updated_count' => 'Updated Records Count: ' . $update_count,
             'message' => 'Data Uploaded Successfully',
         ]);
+    } 
+    catch (\Exception $e) {
+        return response()->json(['message' => $e->getMessage()], 500);
+    }
+
+        
     }
 
     public function users(Request $request)
