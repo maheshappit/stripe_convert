@@ -5,6 +5,9 @@ namespace App\Models;
 use App\Models\ConferencesData;
 use App\Models\User;
 
+use Carbon\Carbon;
+
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -52,6 +55,15 @@ class Conference extends Model
         return $this->hasMany(Comments::class,'email','email','conference','conference','article','article')->count();
     }
 
+
+    public static function getConferenceNameWithCount()
+    {
+        return static::select('conference', \DB::raw('COUNT(*) as count'))
+        ->groupBy('conference')
+        ->orderByDesc('count')
+        ->get();
+    }
+
    
 
     public function client_status()
@@ -91,10 +103,12 @@ class Conference extends Model
     public function positive_count($conference,$user_id,$start_date,$end_date)
     {
 
+        $today = Carbon::today();
+        $formattedDate = $today->format('Y-m-d');
         $positive_count = Comments::where('conference', '=', $conference)
              ->where('user_id', $user_id)
              ->where('client_status_id', 1)
-             ->whereBetween('comment_created_date', [$start_date, $end_date]) // Assuming your Comments model has a 'created_at' column
+             ->where('comment_created_date',$formattedDate) // Assuming your Comments model has a 'created_at' column
              ->count();
              return $positive_count;
 
@@ -104,10 +118,12 @@ class Conference extends Model
     public function negative_count($conference,$user_id,$start_date,$end_date)
     {
 
+        $today = Carbon::today();
+        $formattedDate = $today->format('Y-m-d');
         $positive_count = Comments::where('conference', '=', $conference)
              ->where('user_id', $user_id)
              ->where('client_status_id', 2)
-             ->whereBetween('comment_created_date', [$start_date, $end_date]) // Assuming your Comments model has a 'created_at' column
+             ->where('comment_created_date',$formattedDate) // Assuming your Comments model has a 'created_at' column
              ->count();
              return $positive_count;
 

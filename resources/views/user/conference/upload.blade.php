@@ -56,16 +56,16 @@
                                                 <select class="form-select" name="conference">
                                     <option value="">Choose Conferences</option>
                                     @foreach($all_conferences as $conference)
-                                    <option value="{{$conference}}">{{ $conference }}</option>
+                                    <option value="{{$conference->name}}">{{ $conference->name}}</option>
                                     @endforeach
                                 </select>
                                             </div>
                                             <div class="col-12">
                                                 <label class="form-label">Email Status</label>
-                                                <select class="form-select">
-                                                    <option>Choose One</option>
-                                                    <option>Sent</option>
-                                                    <option>Pending</option>
+                                                <select class="form-select" name="email_sent_status">
+                                                    <option value="">Choose One</option>
+                                                    <option value="sent">Sent</option>
+                                                    <option value="pending">Pending</option>
                                                 </select>
                                             </div>
                                             <div class="col-12">

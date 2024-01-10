@@ -111,7 +111,7 @@
                                 <select class="form-select" name="conference">
                                     <option value="">Choose Conferences</option>
                                     @foreach($all_conferences as $conference)
-                                    <option value="{{$conference}}">{{ $conference }}</option>
+                                    <option value="{{$conference->name}}">{{ $conference->name }}</option>
                                     @endforeach
                                 </select>
                             </div>

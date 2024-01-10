@@ -5,6 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Conference;
+use App\Models\ConferencesData;
 use App\Models\User;
 
 class ConferenceController extends Controller
@@ -14,7 +15,7 @@ class ConferenceController extends Controller
      */
     public function add()
     {
-        $all_conferences = Conference::distinct()->pluck('conference')->toArray();
+        $all_conferences = ConferencesData::all();
 
         return view('user.conference.add',compact('all_conferences'));
     }
@@ -33,7 +34,7 @@ class ConferenceController extends Controller
 
     public function showUpload(){
 
-        $all_conferences = Conference::distinct()->pluck('conference')->toArray();
+        $all_conferences = ConferencesData::all();
 
         return view('user.conference.upload',compact('all_conferences'));
        }

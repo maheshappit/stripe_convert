@@ -3,7 +3,36 @@
 
 <head>
 
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+
+    <!-- data table links -->
+    <!-- <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
+
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script> -->
+
+
+
+    <!-- jQuery -->
+    <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
+
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
+
+    <!-- DataTables Buttons CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css">
+
+    <!-- DataTables Buttons JS -->
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+
+
 
     <!-- //toastr links -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
@@ -53,7 +82,8 @@
 
 
         .toast-error {
-            background-color: #dc3545; /* Red color for error */
+            background-color: #dc3545;
+            /* Red color for error */
             /* Red color for error */
         }
 
@@ -63,24 +93,32 @@
         }
 
         @keyframes toastFadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
+            from {
+                opacity: 0;
+            }
 
-@keyframes toastFadeOut {
-    from {
-        opacity: 1;
-    }
-    to {
-        opacity: 0;
-    }
-}
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes toastFadeOut {
+            from {
+                opacity: 1;
+            }
+
+            to {
+                opacity: 0;
+            }
+        }
     </style>
+
 </head>
+
+
+
+
+
 
 <body>
     <!--start wrapper-->
@@ -91,15 +129,24 @@
                 <div class="mobile-toggle-icon fs-3 d-flex d-lg-none">
                     <i class="bi bi-list"></i>
                 </div>
-                <form class="searchbar">
+
+                <form class="searchbar d-flex">
                     <div class="position-absolute top-50 translate-middle-y search-icon ms-3">
                         <i class="bi bi-search"></i>
                     </div>
-                    <input class="form-control" type="text" placeholder="Type here to search">
+                    <input class="form-control" id="search" type="text" placeholder="Type here to search" name="search">
+
+                    <!-- Search Button -->
+                    <button type="submit" id="search-btn" class="btn btn-primary position-absolute top-50 translate-middle-y end-0">
+                        <i class="bi bi-search"></i> Search
+                    </button>
+
                     <div class="position-absolute top-50 translate-middle-y search-close-icon">
                         <i class="bi bi-x-lg"></i>
                     </div>
                 </form>
+
+
                 <div class="top-navbar-right ms-auto">
                     <ul class="navbar-nav align-items-center gap-1">
                         <li class="nav-item search-toggle-icon d-flex d-lg-none">
@@ -138,7 +185,7 @@
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li>
-                            <a class="dropdown-item" href="dashboard.html">
+                            <a class="dropdown-item" href="{{route('home')}}">
                                 <div class="d-flex align-items-center">
                                     <div class="">
                                         <i class="bi bi-person-fill"></i>
@@ -204,7 +251,9 @@
             <!--navigation-->
             <ul class="metismenu" id="menu">
                 <li>
-                    <a href="dashboard.html">
+                    <a href="{{route('home')}}">
+
+
                         <div class="parent-icon">
                             <i class="bi bi-house-fill"></i>
                         </div>
@@ -239,7 +288,7 @@
                         </li>
                     </ul>
                 </li>
-                <li>
+                <!-- <li>
                     <a href="javascript:;" class="has-arrow">
                         <div class="parent-icon">
                             <i class="bi bi-person-lines-fill"></i>
@@ -284,8 +333,8 @@
                             </a>
                         </li>
                     </ul>
-                </li>
-                <li>
+                </li> -->
+                <!-- <li>
                     <a href="javascript:;" class="has-arrow">
                         <div class="parent-icon">
                             <i class="bi bi-award-fill"></i>
@@ -306,31 +355,31 @@
                             </a>
                         </li>
                     </ul>
-                </li>
-                <li>
+                </li> -->
+                <!-- <li>
                     <a href="timesheet.html">
                         <div class="parent-icon">
                             <i class="bi bi-alarm-fill"></i>
                         </div>
                         <div class="menu-title">Timesheet</div>
                     </a>
-                </li>
+                </li> -->
                 <li>
-                    <a href="report.html">
+                    <a href="{{route('user.show.report')}}">
                         <div class="parent-icon">
                             <i class="bi bi-bar-chart-line-fill"></i>
                         </div>
                         <div class="menu-title">Reports</div>
                     </a>
                 </li>
-                <li>
+                <!-- <li>
                     <a href="contact.html" target="_blank">
                         <div class="parent-icon">
                             <i class="bi bi-telephone-fill"></i>
                         </div>
                         <div class="menu-title">Contact Us</div>
                     </a>
-                </li>
+                </li> -->
             </ul>
             <!--end navigation-->
         </aside>
@@ -350,7 +399,6 @@
     <!-- Bootstrap bundle JS -->
     <script src="public/assets/js/bootstrap.bundle.min.js"></script>
     <!--plugins-->
-    <script src="public/assets/js/jquery.min.js"></script>
     <script src="public/assets/plugins/simplebar/js/simplebar.min.js"></script>
     <script src="public/assets/plugins/metismenu/js/metisMenu.min.js"></script>
     <script src="public/assets/plugins/perfect-scrollbar/js/perfect-scrollbar.js"></script>
@@ -366,10 +414,7 @@
     <script>
         new PerfectScrollbar(".best-product")
     </script>
-    <!-- Datepicker js -->
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+
     <script type="text/javascript">
         $(function() {
 

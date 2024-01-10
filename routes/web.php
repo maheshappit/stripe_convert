@@ -40,7 +40,7 @@ Route::middleware(['checkUserRole'])->group(function () {
     Route::post('conferenceDetails/upload',[ConferenceController::class,'store'])->name('conferencedetails.save');
     Route::any('/user/update', [App\Http\Controllers\HomeController::class, 'update'])->name('user.update');
     Route::get('/users', [App\Http\Controllers\UserController::class, 'index'])->name('users');
-    Route::get('/show-report', [App\Http\Controllers\UserController::class, 'showReport'])->name('show.report');
+    Route::get('/show-report', [App\Http\Controllers\UserController::class, 'showReport'])->name('user.show.report');
     Route::post('/download-report', [App\Http\Controllers\UserController::class, 'downloadReport'])->name('report.download');
     Route::post('/download-emails', [App\Http\Controllers\UserController::class, 'downloadEmails'])->name('download.email');
     // Route::view('/upload', 'upload-form'); // Display the form
@@ -107,8 +107,16 @@ Route::group(['middleware'=>'admin'],function(){
     Route::get('admin/followup/show', [AdminController::class,'getFollowupData'])->name('admin.followup.data');
 
     Route::any('admin/all-conferences/{id}', [AdminController::class,'allClients'])->name('admin.all.conferences');
+    Route::get('admin/neutral', [AdminController::class,'getNeutralShow'])->name('admin.show.neutral');
+
+    Route::get('admin/unsubscribe', [AdminController::class,'ShowUnsubscribeData'])->name('admin.show.unsubscribe');
+    Route::get('admin/unsubscribe/data', [AdminController::class,'getUnsubscribeData'])->name('admin.unsubscribe.data');
 
 
+    Route::get('admin/online', [AdminController::class,'getOnlineShow'])->name('admin.show.online');
+    Route::get('admin/online-data', [AdminController::class,'getOnlineData'])->name('admin.online.data');
+
+    Route::get('admin/neutral/data', [AdminController::class,'getNeutralData'])->name('admin.neutral.data');
     Route::get('admin/followups', [AdminController::class,'getfollowups'])->name('admin.get.followups');
     Route::post('admin/followup/add', [AdminController::class,'addNewFollowups'])->name('admin.add.followupdata');
 

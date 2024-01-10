@@ -1,173 +1,232 @@
-@extends('layouts.dashboard') 
-@section('dashboard-content')
+@extends('layouts.dashboard_header')
 
 
-<script>
-    $(document).ready(function (e) {
-        
-        $('#updateButton').on('click', function () {
+@section('content')
 
 
-            
-        var updateId = document.getElementById('userid').value;
+<head>
 
-            var formData = new FormData($("#myForm")[0]);
+    <script>
+        $(document).ready(function() {
 
-        // Add CSRF token to the form data
-        formData.append('_token', '{{ csrf_token() }}');
-            $.ajax({
-                url: '{{ route('user.update', ['id' => '']) }}' + updateId,
-                type: 'POST',
-                data: formData,
-            processData: false,
-            contentType: false,
-            success: function(response) {
+            $('#myForm').submit(function(e) {
+                e.preventDefault();
 
-                if(response.status_code=='200'){
-                    console.log(response.message);
-                    toastr.success(response.message);
+                var formData = $(this).serialize();
+                var updateId = document.getElementById('userid').value;
 
-                    setTimeout(function() {
-                                 window.location.href = '{{ route('show.conferences') }}'; 
-                         }, 2000);      
 
+                $.ajax({
+                    type: 'POST',
+                    url: '{{ route('user.update', ['id' => '']) }}' + updateId,
+
+                    data: formData,
+                    success: function(response) {
+
+                        console.log(formData);
+
+                        if (response.status_code == '200') {
+                            toastr.success(response.message);
+                            setTimeout(function() {
+                                 window.location.href = '{{ route('user.showall.conferences') }}'; 
+                         }, 2000);  
+
+
+                        }
+                    },
+                    error: function(xhr, status, error) {
+
+                        var errors = xhr.responseJSON.errors;
+                        console.log(errors)
+                        handleValidationErrors(errors);
+                    },
+                });
+            });
+
+            function handleValidationErrors(errors) {
+                // Display validation errors as toasts
+                for (var field in errors) {
+                    if (errors.hasOwnProperty(field)) {
+                        toastr.error(errors[field][0]);
+                    }
                 }
-                // Handle success
-            },
-            error: function(error) {
-                // Handle error
-                console.error(error);
             }
+        });
+    </script>
+
+
+    <script>
+        $(document).ready(function() {
+            // Attach an event listener to the select element
+            $('#client_status_select').change(function() {
+                // Get the selected value
+                var selectedValue = $(this).val();
+
+                // Check if the selected value is 'Followup'
+                if (selectedValue == '3') {
+                    // Show the container with additional fields
+                    $('#followup_fields').show();
+                } else {
+                    // Hide the container if the selected value is not 'Followup'
+                    $('#followup_fields').hide();
+                }
             });
         });
-    });
-</script>
+    </script>
 
-<div class="item">
-        <div class="col-md-12">
-                <div class="card-header">{{ __('Update Conference') }}</div>
-                <br>
 
-                    <form id="myForm">
+
+
+
+</head>
+
+
+
+
+<main class="page-content">
+    <!--breadcrumb-->
+    <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+        <div class="breadcrumb-title pe-3">Conferences</div>
+        <div class="ps-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0 p-0">
+                    <li class="breadcrumb-item">
+                        <a href="javascript:;">
+                            <i class="bi bi-grid-fill"></i>
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">Add New Conference</li>
+                </ol>
+            </nav>
+        </div>
+        <div class="ms-auto">
+            <!-- <div class="btn-group">
+                                <button type="button" class="btn btn-primary">Settings</button>
+                                <button type="button" class="btn btn-primary split-bg-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown">
+                                    <span class="visually-hidden">Toggle Dropdown</span>
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-end">
+                                    <a class="dropdown-item" href="javascript:;">Action</a>
+                                    <a class="dropdown-item" href="javascript:;">Another action</a>
+                                    <a class="dropdown-item" href="javascript:;">Something else here</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="javascript:;">Separated link</a>
+                                </div>
+                            </div> -->
+        </div>
+    </div>
+    <!--end breadcrumb-->
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card">
+                <div class="card-header py-3 bg-transparent">
+                    <h5 class="mb-0">Update New Conferences</h5>
+                </div>
+                <div class="card-body">
+                    <div class="border p-3 rounded">
+
+
+                        <form id="myForm" class="row g-3">
                         @csrf
 
                         <input type="text"  hidden value="{{$user->id}}" id="userid"  >
 
-                        <div class="row mb-3">
-                            <label for="name" class="col-md-4 col-form-label text-md-end">{{ __('Name') }}</label>
+                            <div class="col-12">
+                                <label class="form-label">Conferences</label>
 
-                            <div class="col-md-6">
-                                <input id="first_name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{$user->name}}"   autofocus>
 
-                                @error('name')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
+                                <input type="text" class="form-control" name="conference" placeholder="Enter Conference" readonly value="{{$user->conference ?? ' '}}">
+
+
                             </div>
-                        </div>
-
-                       
-
-                        <div class="row mb-3">
-                            <label for="email" class="col-md-4 col-form-label text-md-end">{{ __('Email Address') }}</label>
-
-                            <div class="col-md-6">
-                                <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ $user->email}}"  autocomplete="email" readonly>
-
-                                @error('email')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
+                            <div class="col-12">
+                                <label class="form-label">Article:</label>
+                                <input type="text" class="form-control" name="article" readonly placeholder="Enter Article" value="{{$user->article ?? ' '}}">
                             </div>
-                        </div>
-
-                        
-                        <div class="row mb-3">
-                            <label for="country" class="col-md-4 col-form-label text-md-end">{{ __('Country') }}</label>
-
-                            <div class="col-md-6">
-                                <input id="country" type="text" class="form-control @error('country') is-invalid @enderror" name="country"  value="{{$user->country}}" >
-
-                                @error('country')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
+                            <div class="col-12">
+                                <label class="form-label">Client Name:</label>
+                                <input type="text" class="form-control" value="{{$user->name ?? ''}}" readonly name="name" placeholder="Enter Client Name">
                             </div>
-                        </div>
-
-
-                       
-
-
-                        <div class="row mb-3">
-                            <label for="conference" class="col-md-4 col-form-label text-md-end">{{ __('Conference') }}</label>
-
-                            <div class="col-md-6">
-                                <input id="conference" type="text" class="form-control @error('conference') is-invalid @enderror" name="conference"  value="{{$user->conference}}" >
-
-                                @error('conference')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
+                            <div class="col-12">
+                                <label class="form-label">Email:</label>
+                                <input type="email" class="form-control" readonly value="{{$user->email ?? ''}}" name="email" placeholder="Enter Email">
                             </div>
-                        </div>
-
-
-                        <input type="text" hidden name="article" value="{{$user->article}}">
-
-
-                        <div class="row mb-3">
-                            <label for="country" class="col-md-4 col-form-label text-md-end">{{ __('Client Status') }}</label>
-
-                            <div class="col-md-6">
-
-                            <select class="custom-select" name="client_status_id" >
-
-                            <option value="">--Choose--</option>
-
-    @foreach ($clientStatuses as $id => $name)
-        <option value="{{ $id }}">{{ $name }}</option>
-    @endforeach
-</select>
-
-                                @error('country')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
+                            <div class="col-12">
+                                <label class="form-label">Country</label>
+                                <input type="text" name="country" class="form-control" value="{{$user->country ?? ''}}" placeholder="Enter Country">
                             </div>
-                        </div>
 
 
-                        <form id="commentform">
-                        <div class="row mb-3">
-                            <label for="country" class="col-md-4 col-form-label text-md-end">{{ __('Feed back Message') }}</label>
+                            <div class="col-12">
+                                <label class="form-label">Client Status</label>
+                                <select class="form-select" name="client_status_id" id="client_status_select">
 
-                            <div class="col-md-6">
-
-                           <textarea name="comment" class="col-md-12" >{{$user->comment}}</textarea>
-
-                                @error('country')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
+                                    <option value="">--Choose--</option>
+                                    @foreach ($clientStatuses as $id => $name)
+                                    <option value="{{ $id }}">{{ $name }}</option>
+                                    @endforeach
+                                </select>
                             </div>
-                        </div>
+
+
+                            <div id="followup_fields" style="display: none;">
+                                <!-- Add your additional input fields here -->
+                                <div class="row justify-content-center">
+                                    <div class="col-md-4">
+                                        <input type="text" id="articleInput2" hidden="">
+                                        <input type="text" id="conferenceInput2" hidden="">
+                                        <input type="text" id="emailInput2" hidden="">
+
+                                        <label class="label">Follow up Date</label>
+                                        <input type="date" class="form-control" id="followup_date" name="followup_date">
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label>Followup Type</label>
+                                        <select class="form-control" name="followup_type" id="followup_type">
+                                            <option value="">--choose one--</option>
+                                            <option value="payment">Payment</option>
+                                            <option value="document">Document</option>
+                                            <option value="reference">Reference</option>
+                                            <option value="confirmation">Confirmation</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        
+
+                                        <label class="label">Note</label>
+                                        <textarea id="note" name="note"></textarea>
+                                    </div>
+                                </div>
+                                <!-- Example: -->
+                            </div>
+
+
+                            <div class="col-12">
+                                <label class="form-label">FeebBack</label>
+                                <textarea name="comment" class="col-md-12" >{{$user->comment}}</textarea>
+                            </div>
+
+                         
+
+
+
+
+
+
+                            <div class="col-12">
+                                <button id="updateButton" class="btn btn-primary px-4">Update</button>
+                            </div>
                         </form>
-
-                        <div class="row mb-0">
-                            <div class="col-md-6 offset-md-4">
-                                <button id="updateButton"class="btn btn-primary">
-                                    {{ __('Update') }}
-                                </button>
-                            </div>
-                        </div>
-                    </form>
+                    </div>
+                </div>
+            </div>
         </div>
-</div>
+    </div>
+    <!--end row-->
+</main>
+
+
+
 @endsection

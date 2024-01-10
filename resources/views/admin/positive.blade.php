@@ -1,23 +1,39 @@
 @extends('layouts.admindashboard')
 
-@section('dashboard-content')
+@section('content')
 
 <head>
-    <style>
-        .label {
-            width: auto !important;
-        }
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 
-        #reportrange {
-            width: fit-content !important;
-
-        }
-    </style>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="assets/images/favicon-32x32.png" type="image/png">
+    <!--plugins-->
+    <link href="assets/plugins/simplebar/css/simplebar.css" rel="stylesheet">
+    <link href="assets/plugins/datetimepicker/css/classic.css" rel="stylesheet">
+    <link href="assets/plugins/datetimepicker/css/classic.time.css" rel="stylesheet">
+    <link href="assets/plugins/datetimepicker/css/classic.date.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link href="assets/plugins/perfect-scrollbar/css/perfect-scrollbar.css" rel="stylesheet">
+    <link href="assets/plugins/metismenu/css/metisMenu.min.css" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/css/bootstrap-extended.css" rel="stylesheet">
+    <link href="assets/css/style.css" rel="stylesheet">
+    <link href="assets/css/icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+    <!-- loader-->
+    <link href="assets/css/pace.min.css" rel="stylesheet">
+    <!--Theme Styles-->
+    <link href="assets/css/dark-theme.css" rel="stylesheet">
+    <link href="assets/css/light-theme.css" rel="stylesheet">
+    <link href="assets/css/semi-dark.css" rel="stylesheet">
+    <link href="assets/css/header-colors.css" rel="stylesheet">
+    <title>Stripe Conferences</title>
 </head>
 
-<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
 
 <script type="text/javascript">
@@ -44,10 +60,10 @@
 
             console.log('Start Date: ' + start.format('YYYY-MM-DD'));
             console.log('End Date: ' + end.format('YYYY-MM-DD'));
-            $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+            $('#reportrange2 span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
         }
 
-        $('#reportrange').daterangepicker({
+        $('#reportrange2').daterangepicker({
             startDate: start,
             endDate: end,
             ranges: {
@@ -65,150 +81,177 @@
     });
 </script>
 
-<script>
-    function resetSelect() {
-        // Get the select element by its id
-        var selectElement = document.getElementById('country');
-
-        // Set the selectedIndex to 0 to reset to the first option
-        selectElement.val().reset();
-    }
 
 
-
-    function openfollowViewModal() {
-
-        var viewmodal = document.getElementById('ViewFollowModal');
-        viewmodal.style.display = 'block';
-    }
-
-    function closeFollowViewModal() {
-        var viewmodal = document.getElementById('ViewFollowModal');
-        viewmodal.style.display = 'none';
-    }
-
-
-    function updatefollowModalContent2(comments) {
-        // Get the comments container
-        var commentsContainer = document.getElementById('commentsContainer');
-
-        // Clear existing content
-        commentsContainer.innerHTML = '';
-
-        // Iterate through comments and append them to the container
-        comments.forEach(comment => {
-            // Create a card element for each comment
-            var cardDiv = document.createElement('div');
-            cardDiv.classList.add('comment-card'); // Add a CSS class for styling if needed
-
-            cardDiv.innerHTML = `
-        <p><b>Client Status:</b> <span style="margin-right:50px" id="clientStatus${comment.id}">${comment.name}</span>
-    
-        <span style="margin-right:50px"> <b> Email:</b> ${comment.email} </span>
-       <span style="margin-right:50px"> <b> Date:</b> ${comment.comment_created_date} </span>
-        </p>
-          <b> Comment: </b> ${comment.comment}
-        </p>
-
-        `;
-
-            var clientStatusSpan = cardDiv.querySelector(`#clientStatus${comment.id}`);
-            if (comment.name === 'Positive') {
-                clientStatusSpan.style.color = 'green';
-                // Add more styles as needed
-            } else if (comment.name === 'Negative') {
-                clientStatusSpan.style.color = 'red';
-                // Add more styles as needed
-            }
-
-
-            // Append the card to the container
-            commentsContainer.appendChild(cardDiv);
-        });
-    }
-
-    function AddFollowmakeAjaxCall(conference, article, email, name) {
-
-        const url = `followups?conference=${conference}&article=${article}&email=${email}&name=${name}`;
-
-        // Make an AJAX request to fetch comments
-        fetch(url) // Update the URL to your actual API endpoint
-            .then(response => response.json())
-            .then(data => {
-                console.log(data.followups);
-
-                document.getElementById('articleInput2').value = article;
-                document.getElementById('conferenceInput2').value = conference;
-                document.getElementById('emailInput2').value = email;
-
-                document.getElementById('nameInput2').value = name;
-
-
-
-
-
-
-                // console.log(data.comments[0].article);
-
-
-                // Update the modal content with comments
-                updateFollowModalContent(data.followups);
-            })
-            .catch(error => console.error('Error fetching comments:', error));
-
-        // Display the modal
-        document.getElementById('ViewFollowModal').style.display = 'block';
-    }
-
-
-    function updateFollowModalContent(followups) {
-
-        console.log(followups);
-        // Get the comments container
-        const commentsContainer = document.getElementById('FollowupcommentsContainer');
-
-        // Clear existing content
-        commentsContainer.innerHTML = '';
-
-        // Iterate through comments and append them to the container
-        followups.forEach(followup => {
-            // Create a card element for each comment
-            var cardDiv = document.createElement('div');
-            cardDiv.classList.add('comment-card'); // Add a CSS class for styling if needed
-
-            cardDiv.innerHTML = `
-        <p><b>Follow Up Date:</b> <span style="margin-right:50px" id="clientStatus${comment.id}">${followup.followup_date}</span>
-    
-        <span style="margin-right:50px"> <b> Follow Up Type:</b> ${followup.followup_type} </span>
-       <span style="margin-right:50px"> <b>Followup Email:</b> ${followup.email} </span>
-        </p>
-          <b> Note: </b> ${followup.note}
-        </p>
-
-        `;
-
-            var clientStatusSpan = cardDiv.querySelector(`#clientStatus${comment.id}`);
-            if (comment.name === 'Positive') {
-                clientStatusSpan.style.color = 'green';
-                // Add more styles as needed
-            } else if (comment.name === 'Negative') {
-                clientStatusSpan.style.color = 'red';
-                // Add more styles as needed
-            }
-
-
-            // Append the card to the container
-            commentsContainer.appendChild(cardDiv);
-        });
-    }
-</script>
 
 
 <script>
     $(document).ready(function() {
-        $('.country').select2();
-        $('.conference').select2();
+        // Set default selected value
+        //   var defaultCountry = 'all';
 
+        // Set the default value in the dropdown
+        var my = $('#country').val();
+
+        if (typeof my !== 'undefined') {
+
+            var my = $('#country').val();
+
+            $('#country').change();
+
+
+            var url = "{{ route('admin.all.conferences', ['id' => 'id']) }}";
+            url = url.replace('id', my);
+
+            // Make an AJAX request to retrieve conference names based on the selected country
+            $.ajax({
+                url: url, // Replace with your server-side script
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    // Update the conference list with the retrieved data
+                    $('#conference').html(displayconferenceNames(data.conferenceNames));
+                },
+                error: function(error) {
+                    console.error('Error fetching conference names:', error);
+                }
+            });
+
+            $('#country').change(function() {
+                // Get the selected country value
+                var selectedCountry = $(this).val();
+
+                var url = "{{ route('all-conferences', ['id' => 'id']) }}";
+                url = url.replace('id', selectedCountry);
+
+                // Make an AJAX request to retrieve conference names based on the selected country
+                $.ajax({
+                    url: url, // Replace with your server-side script
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        // Update the conference list with the retrieved data
+                        $('#conference').html(displayconferenceNames(data.conferenceNames));
+                    },
+                    error: function(error) {
+                        console.error('Error fetching conference names:', error);
+                    }
+                });
+            });
+
+
+
+
+            function displayconferenceNames(conferenceNames) {
+                var html = '<select id="conference" class="conference"> <option>All</option>';
+
+                $.each(conferenceNames, function(index, conferenceName) {
+                    html += '<option>' + conferenceName + '</option>';
+                });
+                html += '</select>';
+                return html;
+            }
+
+        } else {
+
+            // Listen for changes in the country dropdown
+            $('#country').change(function() {
+                // Get the selected country value
+                var selectedCountry = $(this).val();
+
+                var url = "{{ route('all-conferences', ['id' => 'id']) }}";
+                url = url.replace('id', selectedCountry);
+
+                // Make an AJAX request to retrieve conference names based on the selected country
+                $.ajax({
+                    url: url, // Replace with your server-side script
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        // Update the conference list with the retrieved data
+                        $('#conference').html(displayconferenceNames(data.clientNames));
+                    },
+                    error: function(error) {
+                        console.error('Error fetching conference names:', error);
+                    }
+                });
+            });
+
+            function displayconferenceNames(conferenceNames) {
+                var html = '<select id="conference" class="conference">';
+
+                $.each(conferenceNames, function(index, conferenceName) {
+                    html += '<option>' + conferenceName + '</option>';
+                });
+                html += '</select>';
+                return html;
+            }
+
+        }
+
+        // Trigger the change event to make the AJAX request
+
+
+    });
+
+
+    $(document).ready(function() {
+        $('#conference').on('change', function() {
+
+
+
+            var selectedCountryId = $(this).val();
+            var selectedCountryName = $(this).find('option:selected').text();
+
+
+
+
+            if (selectedCountryId !== 'all_countries') {
+                // Generate the URL using the Laravel route helper
+                var url = "{{ route('all-articles', ['id' => 'id']) }}";
+                url = url.replace('id', selectedCountryName);
+
+                // Make an AJAX request to the generated URL
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    dataType: 'json', // Expect JSON response
+                    success: function(data) {
+
+                        // Update the result div with the received client names
+                        $('#article').html(displayClientNames(data.topicNames));
+                    },
+                    error: function(error) {
+                        // Handle errors if necessary
+                        console.log(error);
+                    }
+                });
+            } else {
+                // Handle the case when 'All' is selected
+                $('#article').html('');
+            }
+        });
+
+        function displayClientNames(topicNames) {
+            var html = '<h2>Client Names:</h2><select><option value="All">All</option>';
+            $.each(topicNames, function(index, clientName) {
+                html += '<option>' + clientName + '</option>';
+            });
+            html += '</select>';
+            return html;
+        }
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
+        $("#toggleCheckbox").change(function() {
+            if (this.checked) {
+                $("#hiddenButton").show();
+            } else {
+                $("#hiddenButton").hide();
+            }
+        });
     });
 </script>
 
@@ -653,146 +696,295 @@
 </script>
 
 
-<script>
-
-$(document).ready(function () {
-  $("form").submit(function (event) {
-
-    alert();
-    var formData = {
-      name: $("#name").val(),
-      email: $("#email").val(),
-      superheroAlias: $("#superheroAlias").val(),
-    };
-
-    $.ajax({
-      type: "POST",
-      url: "process.php",
-      data: formData,
-      dataType: "json",
-      encode: true,
-    }).done(function (data) {
-      console.log(data);
-    });
-
-    event.preventDefault();
-  });
-});
-
-</script>
-
-<script>
-
-$(document).ready(function () {
-    $('#myForm').submit(function (e) {
-        // Prevent the default form submission
-        e.preventDefault();
-
-        // Get form data
-        var formData = {
-            name: $('#name').val(),
-            email: $('#email').val()
-        };
-
-        // Make AJAX request
-        $.ajax({
-            type: 'POST',
-            url: "{{ route('admin.positive.data') }}",
-            data: formData,
-            success: function (data) {
-                // Handle the response from the server
-                $('#result').html('Data submitted successfully: ' + data);
-            },
-            error: function (error) {
-                console.log('Error:', error);
-            }
-        });
-    });
-});
+<div class="wrapper">
+    <!--start top header-->
 
 
-</script>
-
-
-
-<div class="item">
-
-    <h5>All Positive Data</h5>
-
-
-    <div class="item">
-
-        <form id="form">
-
-            <div class="row">
-
-
-
-                <div>
-                    <label for="country"> Country:</label>
-                    <select id="country" name="country" class="country">
-                        <option value="All">All</option>
-                        @foreach($countries as $code => $name)
-                        <option value="{{ $name }}">{{ $name }}</option>
-                        @endforeach
-                    </select>
-
-                </div>
-
-                <div>
-                    <label for="conference">Conferences:</label>
-                    <select id="conference" name="conference" class="conference" style="width:auto">
-
-                        <option value="All">All conference Names</option>
-
-                    </select>
-
-
-                </div>
-
-                <div>
-                    <input type="date" id="start_date" hidden name="start_date" />
-                    <input type="date" id="end_date" hidden name="end_date" />
-
-                </div>
-
-
-
-
-                <div id="reportrange" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
-                    <i class="fa fa-calendar"></i>&nbsp;
-                    <span></span> <i class="fa fa-caret-down"></i>
-                </div>
-
-
-
-
-                <div>
-                    <button id="searchButton" class="btn btn-primary btn-sm">Search</button>
-                </div>
-
-
-
-
-
+    <main class="page-content">
+        <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+            <div class="breadcrumb-title pe-3">Conference</div>
+            <div class="ps-3">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0 p-0">
+                        <li class="breadcrumb-item">
+                            <a href="javascript:;">
+                                <i class="bi bi-grid-fill"></i>
+                            </a>
+                        </li>
+                        <li class="breadcrumb-item active" aria-current="page">All Conferences</li>
+                    </ol>
+                </nav>
             </div>
-
-        </form>
-
-
-    </div>
-
-
-    <div class="item">
-        <input type="checkbox" id="toggleCheckbox" class="select-all" disabled> Select All
-        <button id="hiddenButton" class="btn btn-success" style="display: none;">Sent Email</button>
-        <table id="PositivedtHorizontalExample" class="table">
-            <table id="table2" class="table">
-            </table>
-            <table id="mytable2" class="table"></table>
-
-
-    </div>
+            <div class="ms-auto"></div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 mx-auto">
+                <div class="card">
+                    <div class="card-header py-3 bg-transparent">
+                        <h5 class="mb-0">Conferences Positive Data</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="border p-3 rounded">
+                            <form class="row g-3">
+                                <div class="col-12 col-md-3">
+                                    <label class="form-label">Country</label>
 
 
-    @endsection
+                                    <select id="country" name="country" class="country form-select">
+                                        <option value="All">All</option>
+                                        @foreach($countries as $code => $name)
+                                        <option value="{{ $name }}">{{ $name }}</option>
+                                        @endforeach
+                                    </select>
+
+                                </div>
+                                <div class="col-12 col-md-3">
+                                    <label class="form-label">Conferences</label>
+                                    <select id="conference" name="conference" class="conference form-select" style="width:auto">
+
+                                        <option value="All">All conference Names</option>
+
+                                    </select>
+                                </div>
+                                
+
+
+                                <div class="col-12 col-md-4">
+                                    <label class="form-label">Created Date</label>
+                                    <div id="reportrange2" style="
+                                                background: #fff;
+                                                cursor: pointer;
+                                                padding: 5px 10px;
+                                                border: 1px solid #ccc;
+                                                width: 100%;
+                                              ">
+                                        <i class="fa fa-calendar"></i>
+                                        &nbsp;
+                                        <span></span>
+                                        <i class="fa fa-caret-down"></i>
+                                    </div>
+
+                                    <div>
+                                        <input type="date" id="start_date" hidden name="start_date" />
+                                        <input type="date" id="end_date" hidden name="end_date" />
+
+                                    </div>
+
+
+                                </div>
+
+
+
+
+
+                                <div class="col-12">
+                                    <button id="search-btn" class="btn btn-primary px-4">Search</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <!-- <div class="d-flex align-items-center mb-3">
+                    <label>
+                        Show Enteries
+                        <select name="PositivedtHorizontalExample_length" aria-controls="PositivedtHorizontalExample" class="form-select form-select-sm">
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                    </label>
+                    <form class="ms-auto position-relative">
+                        <div class="position-absolute top-50 translate-middle-y search-icon px-3">
+                            <i class="bi bi-search"></i>
+                        </div>
+                        <input class="form-control ps-5" type="text" placeholder="search">
+                    </form>
+                </div> -->
+
+                <input type="checkbox" id="toggleCheckbox" class="select-all" disabled> Select All
+                <button id="hiddenButton" class="btn btn-success" style="display: none;">Sent Email</button>
+                <table id="PositivedtHorizontalExample">
+
+                    <!-- <table id="PositivedtHorizontalExample" class="table table-striped table-bordered border-primary" style="width:100%">
+                    <thead class="table-primary">
+                        <tr>
+                            <th>Sr.No</th>
+                            <th>Conference Name</th>
+                            <th>Topic</th>
+                            <th>Client Name</th>
+                            <th>Email</th>
+                            <th>Country</th>
+                            <th>Email Status</th>
+                            <th>Email Sent Date</th>
+                            <th>Posted By</th>
+                            <th>Created Date</th>
+                            <th>Updated Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>
+                                <div class="d-flex align-items-center gap-3 cursor-pointer">
+                                    <div class="">
+                                        <p class="mb-0">Neurology & Alzheimer’s Disease</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Label-free and ultra</td>
+                            <td>Bhargava</td>
+                            <td>gopishettybhargava@gmail.com</td>
+                            <td>India</td>
+                            <td>Sent</td>
+                            <td>2023-12-05</td>
+                            <td>Bhargava</td>
+                            <td>2023-11-23</td>
+                            <td>2023-11-24</td>
+                            <td>
+                                <div class="table-actions d-flex align-items-center gap-3 fs-6">
+                                    <a href="javascript:;" class="text-primary" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Views">
+                                        <i class="bi bi-eye-fill"></i>
+                                    </a>
+                                    <a href="javascript:;" class="text-warning" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Edit">
+                                        <i class="bi bi-pencil-fill"></i>
+                                    </a>
+                                    <a href="javascript:;" class="text-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Delete">
+                                        <i class="bi bi-trash-fill"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>
+                                <div class="d-flex align-items-center gap-3 cursor-pointer">
+                                    <div class="">
+                                        <p class="mb-0">Neurology & Alzheimer’s Disease</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Label-free and ultra</td>
+                            <td>Bhargava</td>
+                            <td>gopishettybhargava@gmail.com</td>
+                            <td>India</td>
+                            <td>Sent</td>
+                            <td>2023-12-05</td>
+                            <td>Bhargava</td>
+                            <td>2023-11-23</td>
+                            <td>2023-11-24</td>
+                            <td>
+                                <div class="table-actions d-flex align-items-center gap-3 fs-6">
+                                    <a href="javascript:;" class="text-primary" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Views">
+                                        <i class="bi bi-eye-fill"></i>
+                                    </a>
+                                    <a href="javascript:;" class="text-warning" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Edit">
+                                        <i class="bi bi-pencil-fill"></i>
+                                    </a>
+                                    <a href="javascript:;" class="text-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Delete">
+                                        <i class="bi bi-trash-fill"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>
+                                <div class="d-flex align-items-center gap-3 cursor-pointer">
+                                    <div class="">
+                                        <p class="mb-0">Neurology & Alzheimer’s Disease</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Label-free and ultra</td>
+                            <td>Bhargava</td>
+                            <td>gopishettybhargava@gmail.com</td>
+                            <td>India</td>
+                            <td>Sent</td>
+                            <td>2023-12-05</td>
+                            <td>Bhargava</td>
+                            <td>2023-11-23</td>
+                            <td>2023-11-24</td>
+                            <td>
+                                <div class="table-actions d-flex align-items-center gap-3 fs-6">
+                                    <a href="javascript:;" class="text-primary" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Views">
+                                        <i class="bi bi-eye-fill"></i>
+                                    </a>
+                                    <a href="javascript:;" class="text-warning" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Edit">
+                                        <i class="bi bi-pencil-fill"></i>
+                                    </a>
+                                    <a href="javascript:;" class="text-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Delete">
+                                        <i class="bi bi-trash-fill"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table> -->
+            </div>
+            <!-- <div class="d-flex align-items-center">
+                <div class="dataTables_info fs-7 fw-bold p-4" id="PositivedtHorizontalExample_info" role="status" aria-live="polite">Showing 1 to 10 of 120,466 entries</div>
+                <ul class="ms-auto position-relative pagination">
+                    <li class="paginate_button page-item previous disabled" id="PositivedtHorizontalExample_previous">
+                        <a aria-controls="PositivedtHorizontalExample" aria-disabled="true" role="link" data-dt-idx="previous" tabindex="-1" class="page-link">Previous</a>
+                    </li>
+                    <li class="paginate_button page-item active">
+                        <a href="#" aria-controls="PositivedtHorizontalExample" role="link" aria-current="page" data-dt-idx="0" tabindex="0" class="page-link">1</a>
+                    </li>
+                    <li class="paginate_button page-item ">
+                        <a href="#" aria-controls="PositivedtHorizontalExample" role="link" data-dt-idx="1" tabindex="0" class="page-link">2</a>
+                    </li>
+                    <li class="paginate_button page-item ">
+                        <a href="#" aria-controls="PositivedtHorizontalExample" role="link" data-dt-idx="2" tabindex="0" class="page-link">3</a>
+                    </li>
+                    <li class="paginate_button page-item ">
+                        <a href="#" aria-controls="PositivedtHorizontalExample" role="link" data-dt-idx="3" tabindex="0" class="page-link">4</a>
+                    </li>
+                    <li class="paginate_button page-item ">
+                        <a href="#" aria-controls="PositivedtHorizontalExample" role="link" data-dt-idx="4" tabindex="0" class="page-link">5</a>
+                    </li>
+                    <li class="paginate_button page-item disabled" id="PositivedtHorizontalExample_ellipsis">
+                        <a aria-controls="PositivedtHorizontalExample" aria-disabled="true" role="link" data-dt-idx="ellipsis" tabindex="-1" class="page-link">…</a>
+                    </li>
+                    <li class="paginate_button page-item ">
+                        <a href="#" aria-controls="PositivedtHorizontalExample" role="link" data-dt-idx="12046" tabindex="0" class="page-link">12047</a>
+                    </li>
+                    <li class="paginate_button page-item next" id="PositivedtHorizontalExample_next">
+                        <a href="#" aria-controls="PositivedtHorizontalExample" role="link" data-dt-idx="next" tabindex="0" class="page-link">Next</a>
+                    </li>
+                </ul>
+            </div> -->
+        </div>
+    </main>
+    <a href="javaScript:;" class="back-to-top">
+        <i class="bx bxs-up-arrow-alt"></i>
+    </a>
+</div>
+<!-- <script>
+    new DataTable('#example');
+</script> -->
+<script src="assets/js/bootstrap.bundle.min.js"></script>
+<!--plugins-->
+<!-- <script src="assets/js/jquery.min.js"></script> -->
+<script src="assets/plugins/simplebar/js/simplebar.min.js"></script>
+<script src="assets/plugins/metismenu/js/metisMenu.min.js"></script>
+<script src="assets/plugins/perfect-scrollbar/js/perfect-scrollbar.js"></script>
+<script src="assets/js/pace.min.js"></script>
+<script src="assets/plugins/datetimepicker/js/legacy.js"></script>
+<script src="assets/plugins/datetimepicker/js/picker.js"></script>
+<script src="assets/plugins/datetimepicker/js/picker.time.js"></script>
+<script src="assets/plugins/datetimepicker/js/picker.date.js"></script>
+<script src="assets/plugins/bootstrap-material-datetimepicker/js/moment.min.js"></script>
+<script src="assets/plugins/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker.min.js"></script>
+<script src="assets/js/form-date-time-pickes.js"></script>
+<!--app-->
+<script src="assets/js/app.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+
+@endsection

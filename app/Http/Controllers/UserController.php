@@ -16,7 +16,7 @@ class UserController extends Controller
 {
 
 
-    public function index(Request $request)
+    public function indexold(Request $request)
     {
 
 
@@ -25,34 +25,34 @@ class UserController extends Controller
 
         if (isset($request->search)) {
             $query->where('email', 'like', '%' . $request->search . '%');
-        } else{
+        } else {
             $query->when($request->country != 'All', function ($query) use ($request) {
-        $query->where('country', $request->country);
-    });
+                $query->where('country', $request->country);
+            });
 
-    $query->when($request->conference != 'All', function ($query) use ($request) {
-        $query->where('conference', $request->conference);
-    });
+            $query->when($request->conference != 'All', function ($query) use ($request) {
+                $query->where('conference', $request->conference);
+            });
 
-    $query->when($request->article != 'All', function ($query) use ($request) {
-        $query->where('article', $request->article);
-    });
+            $query->when($request->article != 'All', function ($query) use ($request) {
+                $query->where('article', $request->article);
+            });
 
-    $query->when($request->email_status != 'All', function ($query) use ($request) {
-        $query->where('email_sent_status', $request->email_status);
-    });
+            $query->when($request->email_status != 'All', function ($query) use ($request) {
+                $query->where('email_sent_status', $request->email_status);
+            });
 
-    $query->when($request->user_created_at != '', function ($query) use ($request) {
-        $query->where('user_created_at', $request->user_created_at);
-    });
+            $query->when($request->user_created_at != '', function ($query) use ($request) {
+                $query->where('user_created_at', $request->user_created_at);
+            });
 
-    $query->when($request->user_updated_at != '', function ($query) use ($request) {
-        $query->where('user_updated_at', $request->user_updated_at);
-    });
+            $query->when($request->user_updated_at != '', function ($query) use ($request) {
+                $query->where('user_updated_at', $request->user_updated_at);
+            });
 
-    $query->when($request->user != 'All', function ($query) use ($request) {
-        $query->where('user_id', $request->user);
-    });
+            $query->when($request->user != 'All', function ($query) use ($request) {
+                $query->where('user_id', $request->user);
+            });
         }
 
 
@@ -68,6 +68,86 @@ class UserController extends Controller
             ->make(true);
     }
 
+    public function index(Request $request)
+    {
+
+
+
+
+
+
+
+        $query = Conference::query();
+        $startDate= $request->from_date;
+
+
+        if (isset($request->search)) {
+            $query->where('email', 'like', '%' . $request->search . '%');
+        } else {
+
+            $this->applyFilters($query, $request);
+            
+        }
+
+
+
+
+
+        return Datatables::of($query)
+            ->addIndexColumn()
+            ->addColumn('posted_by', function ($row) {
+                return $row->postedby->name ?? '';
+            })
+            ->rawColumns(['posted_by'])
+            ->make(true);
+    }
+
+    private function applyFilters($query, $request)
+{
+
+
+    // dd($request->all());
+    $query->when($request->country != 'All', function ($query) use ($request) {
+        $query->where('country', $request->country);
+    });
+
+    $query->when($request->conference != 'All', function ($query) use ($request) {
+        $query->where('conference', $request->conference);
+    });
+
+    $query->when($request->article != 'All', function ($query) use ($request) {
+        $query->where('article', $request->article);
+    });
+
+    $query->when($request->email_status != 'All', function ($query) use ($request) {
+        $query->where('email_sent_status', $request->email_status);
+    });
+
+    $query->when($request->email_sent_from_date != '', function ($query) use ($request) {
+
+        $query->whereBetween('email_sent_date', [$request->email_sent_from_date, $request->email_sent_to_date]);
+
+    });
+
+    $query->when($request->from_date != '', function ($query) use ($request) {
+
+        // dd($request->user_created_at);
+        $query->whereBetween('user_created_at', [$request->from_date, $request->to_date]);
+    });
+
+  
+
+    $query->when($request->user != 'All', function ($query) use ($request) {
+        $query->where('user_id', $request->user);
+    });
+    
+
+    
+
+
+  
+}
+
 
 
     public function showReport()
@@ -78,13 +158,14 @@ class UserController extends Controller
         $users_count = User::where('role', 'user')->get()->count();
         $inserted_count = Conference::whereNotNull('user_created_at')->count();
         $updated_count = Conference::whereNotNull('user_updated_at')->count();
-        $download_count = Conference::whereNotNull('download_count')->count();
+        $downloaded_count = Conference::whereNotNull('download_count')->count();
         $all_conferences = Conference::distinct()->pluck('conference')->toArray();
-        return view('user.reports', compact('all_users', 'users_count', 'inserted_count', 'updated_count', 'download_count', 'all_conferences'));
+        return view('user.reports', compact('all_users', 'users_count', 'inserted_count', 'updated_count', 'downloaded_count', 'all_conferences'));
     }
 
     public function downloadReport(Request $request)
     {
+        
 
 
         $all_users = User::all();
@@ -128,22 +209,22 @@ class UserController extends Controller
         if ($request->user_id == 'All') {
 
             $inserted_count = Conference::whereNotNull('user_created_at')
-            ->whereBetween('user_created_at', [$startDate, $endDate])
-            ->count();
+                ->whereBetween('user_created_at', [$startDate, $endDate])
+                ->count();
 
 
-        $users_count = User::where('role', 'user')
-            ->count();
+            $users_count = User::where('role', 'user')
+                ->count();
 
 
-        $updated_count = Conference::whereNotNull('user_updated_at')
-            ->whereBetween('user_created_at', [$startDate, $endDate])
-            ->count();
+            $updated_count = Conference::whereNotNull('user_updated_at')
+                ->whereBetween('user_created_at', [$startDate, $endDate])
+                ->count();
 
 
-        $downloaded_count = Conference::whereNotNull('download_count')
-            ->whereBetween('user_downloaded_at', [$startDate, $endDate])
-            ->count();
+            $downloaded_count = Conference::whereNotNull('download_count')
+                ->whereBetween('user_downloaded_at', [$startDate, $endDate])
+                ->count();
             $query->select('users.id', 'users.name', 'users.created_at');
             $query->selectRaw(
                 '
@@ -153,25 +234,26 @@ class UserController extends Controller
             );
             $query->whereNotNull('conferences.user_created_at'); // Only count inserted records
             $query->groupBy('users.id', 'users.name', 'users.created_at',);
-        } else if($request->user_id != 'All') {
+        } else if ($request->user_id != 'All') {
 
-            $inserted_count = Conference::whereNotNull('user_created_at')
-            ->whereBetween('user_created_at', [$startDate, $endDate])
-            ->count();
-
-
-        $users_count = User::where('id', $request->user_id)
-            ->count();
+            $inserted_count = Conference::where('user_id', $request->user_id)
+                ->whereBetween('user_created_at', [$startDate, $endDate])
+                ->count();
 
 
-        $updated_count = Conference::whereNotNull('user_updated_at')
-            ->whereBetween('user_created_at', [$startDate, $endDate])
-            ->count();
+            $users_count = User::where('id', $request->user_id)
+                ->count();
 
 
-        $downloaded_count = Conference::whereNotNull('download_count')
-            ->whereBetween('user_downloaded_at', [$startDate, $endDate])
-            ->count();
+            $updated_count = Conference::where('user_id', $request->user_id)
+                ->whereBetween('user_updated_at', [$startDate, $endDate])
+                ->count();
+
+
+            $downloaded_count = Conference::whereNotNull('download_count')
+                ->where('user_id', $request->user_id)
+                ->whereBetween('user_downloaded_at', [$startDate, $endDate])
+                ->count();
             $query->where('conferences.user_id', $request->user_id);
             $query->select('users.id', 'users.name', 'users.created_at');
 
@@ -182,17 +264,17 @@ class UserController extends Controller
             SUM(CASE WHEN conferences.user_updated_at IS NOT NULL THEN 1 ELSE 0 END) as updated_count,
             SUM(conferences.download_count) as download_count'
             );
-            $query->groupBy('users.id', 'users.name', 'users.created_at');
+            $query->groupBy('users.id', 'users.name');
         }
 
 
         $result = $query->get();
 
         return DataTables::of($result)
-        ->with('users_count', $users_count)
-                ->with('inserted_count', $inserted_count)
-                ->with('updated_count', $updated_count)
-                ->with('downloaded_count', $downloaded_count)
+            ->with('users_count', $users_count)
+            ->with('inserted_count', $inserted_count)
+            ->with('updated_count', $updated_count)
+            ->with('downloaded_count', $downloaded_count)
             ->make(true);
     }
 

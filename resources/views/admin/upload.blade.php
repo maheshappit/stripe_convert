@@ -1,90 +1,95 @@
 @extends('layouts.admindashboard')
+@section('content')
 
-@section('dashboard-content')
+<main class="page-content">
+                    <!--breadcrumb-->
+                    <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+                        <div class="breadcrumb-title pe-3">Conferences</div>
+                        <div class="ps-3">
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb mb-0 p-0">
+                                    <li class="breadcrumb-item">
+                                        <a href="javascript:;">
+                                            <i class="bi bi-grid-fill"></i>
+                                        </a>
+                                    </li>
+                                    <li class="breadcrumb-item active" aria-current="page">Upload New Conference</li>
+                                </ol>
+                            </nav>
+                        </div>
+                        <!-- <div class="ms-auto">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-primary">Settings</button>
+                                <button type="button" class="btn btn-primary split-bg-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown">
+                                    <span class="visually-hidden">Toggle Dropdown</span>
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-end">
+                                    <a class="dropdown-item" href="javascript:;">Action</a>
+                                    <a class="dropdown-item" href="javascript:;">Another action</a>
+                                    <a class="dropdown-item" href="javascript:;">Something else here</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="javascript:;">Separated link</a>
+                                </div>
+                            </div></div> -->
+                    </div>
+                    <!--end breadcrumb-->
+                    <div class="row">
+                        <div class="col-lg-8 mx-auto">
+                            <div class="card">
+                                <div class="card-header py-3 bg-transparent">
+                                    <h5 class="mb-0">Upload New Conferences</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="border p-3 rounded">
 
-<div class="item">
+                                        <form id="uploadForm" class="row g-3" enctype="multipart/form-data">
 
-<form id="uploadForm" enctype="multipart/form-data">
-        @csrf
+                                            @csrf
+                                            <div class="col-12">
+                                                <label class="form-label">Upload File:</label>
 
+                                                <input class="form-control" type="file" name="csvFile" accept=".csv">
 
-        <div class="row">
+                                            </div>
+                                            <div class="col-12">
+                                                <label class="form-label">Conferences:</label>
+                                                <select class="form-select" name="conference">
+                                    <option value="">Choose Conferences</option>
+                                    @foreach($all_conferences as $conference)
+                                    <option value="{{$conference->name}}">{{ $conference->name}}</option>
+                                    @endforeach
+                                </select>
+                                            </div>
+                                            <div class="col-12">
+                                                <label class="form-label">Email Status</label>
+                                                <select class="form-select" name="email_sent_status">
+                                                    <option value="">Choose One</option>
+                                                    <option value="sent">Sent</option>
+                                                    <option value="pending">Pending</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-12">
+                                                <button id="uploadButton"  class="btn btn-primary px-4">Submit</button>
+                                            </div>
+                                            <a href="assets/Sample.csv" download="">Sample File Download</a>
+                                        </form>
 
-        <div>
-        <label for="conference">Conference:</label>
-                    <select class="custom-select"  style="width: fit-content;"   name="conference">
-                        <option value="">--Choose Conference--</option>
-                        @foreach($conferences as $code )
-                        <option value="{{ $code->name}}">{{ $code->name}}</option>
-                        @endforeach
-                    </select>
-
-        </div>
-
-
-        <div>
-
-        <label>Email Status</label>
-
-        <select class="custom-select" name="email_sent_status" style="width: fit-content;" >
-
-        <option value="">--choose--</option>
-        <option value="pending">Pending</option>
-        <option value="sent">Sent</option>
-
-        </select>
-
-        </div>
-
-        <div>
-
-        <input type="file" name="csvFile" accept=".csv">
-
-
-        </div>
-
-        <div>
-        <button class="btn btn-primary" id="uploadButton" type="submit">Upload</button>
-
-        </div>
-
-
-        
-       
-
-
-
-        </div>
-
-        
-
-       
-
-        
-        
-
-
-        
-
-
-    </form>
-
-    
- 
-
-    <a href="{{ asset('Samples/Sample.csv') }}" download>Sample Headers File Download</a>
-
-    <div id="message" style="color: green"></div>
+                                        <div id="message" style="color: green"></div>
     <div id="error-message" style="color: red"></div>
 
     <div id="inserted_count" style="color: green"></div>
     <div id="updated_count" style="color: blue"></div>
     <div id="erros_count" style="color: red"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--end row-->
+                </main>
 
 
-</div>
-
-<script>
+                <script>
     $('#uploadForm').submit(function(e) {
         e.preventDefault();
         var formData = new FormData(this);
@@ -168,6 +173,6 @@
         });
     });
 </script>
-
+                
 
 @endsection

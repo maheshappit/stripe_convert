@@ -138,7 +138,11 @@ class AdminController extends Controller
 
     public function ShowFollowup()
     {
-        return view('admin.followup');
+        $countries = Conference::distinct()->pluck('country',)->toArray();
+
+
+
+        return view('admin.followup',compact('countries'));
     }
 
 
@@ -150,12 +154,17 @@ class AdminController extends Controller
         $query = followup::query();
 
 
-        $latestConferences = $query->get();
+        // $latestConferences = $query->get();
+        $latestConferences = $query
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         $uniqueConferences = $latestConferences
             ->unique(function ($item) {
                 return $item->email . $item->article . $item->conference;
             });
+
+
 
         return Datatables::of($uniqueConferences)
             ->make(true);
@@ -175,6 +184,16 @@ class AdminController extends Controller
         return view('admin.negative', compact('countries'));
     }
 
+    public function getOnlineShow(Request $request)
+    {
+
+        $countries = Conference::distinct()->pluck('country',)->toArray();
+
+        return view('admin.online', compact('countries'));
+    }
+
+
+
 
     public function getPositiveShow(Request $request)
     {
@@ -189,39 +208,68 @@ class AdminController extends Controller
         return view('admin.positive', compact('all_conferences', 'countries'));
     }
 
-
-    public function getNegativeData(Request $request)
+    public function getNeutralShow(Request $request)
     {
 
-        $query = Conference::query();
 
+
+
+        $all_conferences = Conference::distinct()->pluck('conference')->toArray();
+        $countries = Conference::distinct()->pluck('country',)->toArray();
+
+
+        return view('admin.neutral', compact('all_conferences', 'countries'));
+    }
+
+    public function ShowUnsubscribeData(Request $request)
+    {
+
+
+
+
+        $all_conferences = Conference::distinct()->pluck('conference')->toArray();
+        $countries = Conference::distinct()->pluck('country',)->toArray();
+
+
+        return view('admin.unsubscribe', compact('all_conferences', 'countries'));
+    }
+
+
+
+
+
+
+
+
+    public function getOnlineData(Request $request)
+    {
+
+        // dd($request);
+
+        $query = Conference::query();
         $query->join('comments', function ($join) {
-            $join->on('comments.conference', '=', 'conferences.conference')
-                ->on('comments.email', '=', 'conferences.email')
-                ->on('comments.article', '=', 'conferences.article');
+            $join->on('comments.email', '=', 'conferences.email')
+                ->on('comments.article', '=', 'conferences.article')
+                ->on('comments.conference', '=', 'conferences.conference')
+                ->whereRaw('comments.created_at = (
+                        SELECT MAX(created_at) 
+                        FROM comments 
+                        WHERE comments.email = conferences.email 
+                        AND comments.article = conferences.article 
+                        AND comments.conference = conferences.conference
+                    )');
         });
 
-        if ($request->country != 'All') {
-            $query->where('conferences.country', '=', $request->country);
-        }
+        $query->where('client_status_id', 9);
 
-        if ($request->conference != 'All') {
-            $query->where('conferences.conference', '=', $request->conference);
-        }
+        
 
-        if ($request->start_date && $request->end_date) {
-            $query->whereBetween('conferences.user_created_at', [$request->start_date, $request->end_date]);
-        }
+        $this->PositiveapplyFilters($query, $request);
 
-        $latestConferences = $query->get();
 
-        $uniqueConferences = $latestConferences
-            ->unique(function ($item) {
-                return $item->email . $item->article . $item->conference;
-            })
-            ->sortByDesc('created_at')->where('client_status_id', 2);
 
-        return Datatables::of($uniqueConferences)
+        $data = $query->get();
+        return Datatables::of($data)
             ->addIndexColumn()
             ->addColumn('posted_by', function ($row) {
                 return $row->postedby->name ?? '';
@@ -237,38 +285,184 @@ class AdminController extends Controller
     }
 
 
+    public function getNeutralData(Request $request)
+    {
+
+        // dd($request);
+
+        $query = Conference::query();
+        $query->join('comments', function ($join) {
+            $join->on('comments.email', '=', 'conferences.email')
+                ->on('comments.article', '=', 'conferences.article')
+                ->on('comments.conference', '=', 'conferences.conference')
+                ->whereRaw('comments.created_at = (
+                        SELECT MAX(created_at) 
+                        FROM comments 
+                        WHERE comments.email = conferences.email 
+                        AND comments.article = conferences.article 
+                        AND comments.conference = conferences.conference
+                    )');
+        });
+
+        $query->where('client_status_id', 7);
+
+        
+        $this->PositiveapplyFilters($query, $request);
+
+
+
+
+        $data = $query->get();
+        return Datatables::of($data)
+            ->addIndexColumn()
+            ->addColumn('posted_by', function ($row) {
+                return $row->postedby->name ?? '';
+            })
+            ->addColumn('comments_count', function ($row) {
+                return $row->comments();
+            })
+            ->addColumn('client_status', function ($row) {
+                return $row->client_status();
+            })
+            ->rawColumns(['posted_by'])
+            ->make(true);
+    }
+
+    public function getUnsubscribeData(Request $request)
+    {
+
+        // dd($request);
+
+        $query = Conference::query();
+        $query->join('comments', function ($join) {
+            $join->on('comments.email', '=', 'conferences.email')
+                ->on('comments.article', '=', 'conferences.article')
+                ->on('comments.conference', '=', 'conferences.conference')
+                ->whereRaw('comments.created_at = (
+                        SELECT MAX(created_at) 
+                        FROM comments 
+                        WHERE comments.email = conferences.email 
+                        AND comments.article = conferences.article 
+                        AND comments.conference = conferences.conference
+                    )');
+        });
+
+        $query->where('client_status_id', 8);
+
+        $this->PositiveapplyFilters($query, $request);
+
+
+
+
+
+        $data = $query->get();
+        return Datatables::of($data)
+            ->addIndexColumn()
+            ->addColumn('posted_by', function ($row) {
+                return $row->postedby->name ?? '';
+            })
+            ->addColumn('comments_count', function ($row) {
+                return $row->comments();
+            })
+            ->addColumn('client_status', function ($row) {
+                return $row->client_status();
+            })
+            ->rawColumns(['posted_by'])
+            ->make(true);
+    }
+
+
+
+
+
+    public function getNegativeData(Request $request)
+    {
+
+        $query = Conference::query();
+        $query->join('comments', function ($join) {
+            $join->on('comments.email', '=', 'conferences.email')
+                ->on('comments.article', '=', 'conferences.article')
+                ->on('comments.conference', '=', 'conferences.conference')
+                ->whereRaw('comments.created_at = (
+                        SELECT MAX(created_at) 
+                        FROM comments 
+                        WHERE comments.email = conferences.email 
+                        AND comments.article = conferences.article 
+                        AND comments.conference = conferences.conference
+                    )');
+        });
+
+        $query->where('client_status_id', 2);
+
+        $this->PositiveapplyFilters($query, $request);
+
+       
+        $data = $query->get();
+        return Datatables::of($data)
+            ->addIndexColumn()
+            ->addColumn('posted_by', function ($row) {
+                return $row->postedby->name ?? '';
+            })
+            ->addColumn('comments_count', function ($row) {
+                return $row->comments();
+            })
+            ->addColumn('client_status', function ($row) {
+                return $row->client_status();
+            })
+            ->rawColumns(['posted_by'])
+            ->make(true);
+    }
+
+
+    private function PositiveapplyFilters($query, $request)
+    {
+
+
+
+        $query->when($request->conference == 'All', function ($query) use ($request) {
+            $query->whereNotNull('conferences.email');
+        });
+        
+        $query->when($request->conference != 'All', function ($query) use ($request) {
+            $query->where('conferences.conference', $request->conference);
+        });
+
+
+       
+        $query->when($request->country != 'All', function ($query) use ($request) {
+
+            $query->where('conferences.country',$request->country);
+        });
+        $query->when($request->start_date != '', function ($query) use ($request) {
+
+            $query->whereBetween('conferences.user_created_at', [$request->start_date, $request->end_date]);
+        });
+    }
+
     public function ShowPositiveData(Request $request)
     {
 
         $query = Conference::query();
-
         $query->join('comments', function ($join) {
-            $join->on('comments.conference', '=', 'conferences.conference')
-                ->on('comments.email', '=', 'conferences.email')
-                ->on('comments.article', '=', 'conferences.article');
+            $join->on('comments.email', '=', 'conferences.email')
+                ->on('comments.article', '=', 'conferences.article')
+                ->on('comments.conference', '=', 'conferences.conference')
+                ->whereRaw('comments.created_at = (
+                        SELECT MAX(created_at) 
+                        FROM comments 
+                        WHERE comments.email = conferences.email 
+                        AND comments.article = conferences.article 
+                        AND comments.conference = conferences.conference
+                    )');
         });
 
-        if ($request->country != 'All') {
-            $query->where('conferences.country', '=', $request->country);
-        }
+        $query->where('client_status_id', 1);
 
-        if ($request->conference != 'All') {
-            $query->where('conferences.conference', '=', $request->conference);
-        }
+        $this->PositiveapplyFilters($query, $request);
 
-        if ($request->start_date && $request->end_date) {
-            $query->whereBetween('conferences.user_created_at', [$request->start_date, $request->end_date]);
-        }
 
-        $latestConferences = $query->get();
-
-        $uniqueConferences = $latestConferences
-            ->unique(function ($item) {
-                return $item->email . $item->article . $item->conference;
-            })
-            ->sortByDesc('created_at')->where('client_status_id', 1);
-
-        return Datatables::of($uniqueConferences)
+        $data = $query->get();
+        return Datatables::of($data)
             ->addIndexColumn()
             ->addColumn('posted_by', function ($row) {
                 return $row->postedby->name ?? '';
@@ -320,9 +514,10 @@ class AdminController extends Controller
                 'followup_created_date' => $currentDateTime
             ]);
 
-            $followups = followup::where('conference', 'LIKE', '%' . $request->conference . '%')
+            $followups = Followup::where('conference', 'LIKE', '%' . $request->conference . '%')
                 ->where('email', 'LIKE', '%' . $request->email . '%')
                 ->where('article', 'LIKE', '%' . $request->article . '%')
+                ->latest()
                 ->get();
 
 
@@ -522,7 +717,7 @@ class AdminController extends Controller
         $start_date = $request->from_date;
         $end_date = $request->to_date;
 
-        $all_conferences = Conference::distinct()->pluck('conference')->toArray();
+        $all_conferences = ConferencesData::all();
 
         $clientStatuses = ClientStatus::pluck('name', 'id')->all();
 
@@ -552,7 +747,7 @@ class AdminController extends Controller
 
 
 
-        return view('admin.reports', compact('all_users', 'users_count', 'inserted_count', 'updated_count', 'download_count', 'all_conferences', 'clientStatuses'));
+        return view('admin.reports', compact('all_users', 'users_count', 'inserted_count', 'updated_count', 'download_count', 'all_conferences', 'clientStatuses','all_conferences'));
     }
 
     public function downloadReport(Request $request)
@@ -573,7 +768,7 @@ class AdminController extends Controller
 
         ]);
 
-
+        // get all users and all conferences
         if ($request->user_id == 'All' && $request->conference == 'All') {
 
 
@@ -582,12 +777,12 @@ class AdminController extends Controller
                 ->count();
 
 
-            $users_count = User::where('role', 'user')
+            $users_count = User::all()
                 ->count();
 
 
             $updated_count = Conference::whereNotNull('user_updated_at')
-                ->whereBetween('user_created_at', [$startDate, $endDate])
+                ->whereBetween('user_updated_at', [$startDate, $endDate])
                 ->count();
 
 
@@ -652,132 +847,45 @@ class AdminController extends Controller
                     $user_id = $row->id;
                     return $row->negative_count($conference, $user_id, $startDate, $endDate);
                 })
-                
-                ->make(true);
-        }
-
-
-
-        if ($request->user_id != 'All' && $request->conference != 'All') {
-
-            $inserted_count = Conference::whereNotNull('user_created_at')
-                ->whereBetween('user_created_at', [$startDate, $endDate])
-                ->where('user_id', $request->user_id)
-                ->where('conference', $request->conference)
-
-                ->count();
-
-
-            $users_count = User::where('id', $request->user_id)
-                ->count();
-
-
-            $updated_count = Conference::whereNotNull('user_updated_at')
-                ->whereBetween('user_created_at', [$startDate, $endDate])
-                ->where('user_id', $request->user_id)
-                ->where('conference', $request->conference)
-                ->count();
-
-            $downloaded_count = Conference::whereNotNull('download_count')
-                ->whereBetween('user_downloaded_at', [$startDate, $endDate])
-                ->where('user_id', $request->user_id)
-                ->where('conference', $request->conference)
-                ->count();
-
-
-            $query = Conference::query();
-
-
-            $query = Conference::query();
-
-            $result = $query
-                ->select([
-                    'users.id',
-                    'users.name',
-                    'users.created_at',
-                    'conferences.conference',
-                    DB::raw('COUNT(DISTINCT conferences.conference) AS conference_count'),
-                    DB::raw('COUNT(DISTINCT CASE WHEN conferences.user_created_at >= ? AND conferences.user_created_at <= ? THEN conferences.id END) AS inserted_count'),
-                    DB::raw('COUNT(DISTINCT CASE WHEN conferences.user_updated_at >= ? AND conferences.user_updated_at <= ? THEN conferences.id END) AS updated_count'),
-                    DB::raw('SUM(CASE WHEN conferences.download_count = "1" AND conferences.user_created_at BETWEEN ? AND ? THEN 1 ELSE 0 END) AS download_count'),
-                    DB::raw('SUM(CASE WHEN conferences.email_sent_status = "sent" THEN 1 ELSE 0 END) AS email_sent_count'),
-                    DB::raw('SUM(CASE WHEN conferences.email_sent_status = "pending" THEN 1 ELSE 0 END) AS email_pending_count'),
-                ])
-                ->leftJoin('users', 'users.id', '=', 'conferences.user_id')
-                ->leftJoin('comments', 'conferences.conference', '=', 'comments.conference')
-                ->where('users.id', $request->user_id)  // Replace $userId with the actual user ID
-                ->where('conferences.conference', $request->conference)  // Replace $conference with the actual conference
-                ->whereBetween('conferences.user_created_at', [$request->start_date, $request->end_date])
-                ->orWhereBetween('conferences.download_count', [$request->start_date, $request->end_date])
-                ->orWhereBetween('conferences.email_sent_status', [$request->start_date, $request->end_date])
-                ->orWhereBetween('conferences.user_updated_at', [$request->start_date, $request->end_date])
-                ->groupBy('users.id', 'users.name', 'users.created_at', 'conferences.conference', 'conferences.user_id')
-                ->addBinding($request->start_date, 'select')
-                ->addBinding($request->end_date, 'select')
-                ->addBinding($request->start_date, 'select')
-                ->addBinding($request->end_date, 'select')
-                ->addBinding($request->start_date, 'select')
-                ->addBinding($request->end_date, 'select')
-                ->get();
-
-
-            return DataTables::of($result)
-
-                ->addColumn('client_positive_count', function ($row) use ($request) {
-                    $conference = $row->conference;
-                    $startDate = $request->start_date;
-                    $endDate = $request->end_date;
-                    $user_id = $row->id;
-                    return $row->positive_count($conference, $user_id, $startDate, $endDate);
-                })
-
-                ->addColumn('client_negative_count', function ($row) use ($request) {
-                    $conference = $row->conference;
-                    $startDate = $request->start_date;
-                    $endDate = $request->end_date;
-                    $user_id = $row->id;
-                    return $row->negative_count($conference, $user_id, $startDate, $endDate);
-                })
-
                 ->with('users_count', $users_count)
                 ->with('inserted_count', $inserted_count)
                 ->with('updated_count', $updated_count)
                 ->with('downloaded_count', $downloaded_count)
+
                 ->make(true);
         }
 
+
+        //get all users and particular conference
         if ($request->user_id == 'All' && $request->conference != 'All') {
 
+            // dd($request);
+
             $inserted_count = Conference::whereNotNull('user_created_at')
                 ->whereBetween('user_created_at', [$startDate, $endDate])
-                ->where('user_id', $request->user_id)
                 ->where('conference', $request->conference)
 
                 ->count();
 
 
-            $users_count = User::where('id', $request->user_id)
+            $users_count = User::all()
                 ->count();
 
 
             $updated_count = Conference::whereNotNull('user_updated_at')
                 ->whereBetween('user_created_at', [$startDate, $endDate])
-                ->where('user_id', $request->user_id)
                 ->where('conference', $request->conference)
                 ->count();
 
             $downloaded_count = Conference::whereNotNull('download_count')
                 ->whereBetween('user_downloaded_at', [$startDate, $endDate])
-                ->where('user_id', $request->user_id)
                 ->where('conference', $request->conference)
                 ->count();
 
 
             $query = Conference::query();
 
-
             $query = Conference::query();
-
             $result = $query
                 ->select([
                     'users.id',
@@ -792,13 +900,28 @@ class AdminController extends Controller
                     DB::raw('SUM(CASE WHEN conferences.email_sent_status = "pending" THEN 1 ELSE 0 END) AS email_pending_count'),
                 ])
                 ->leftJoin('users', 'users.id', '=', 'conferences.user_id')
-                ->leftJoin('comments', 'conferences.conference', '=', 'comments.conference')
-                ->where('conferences.conference', $request->conference)  // Replace $conference with the actual conference
+                ->where('users.id', $request->user_id)
+
+                // ->leftJoin('comments', 'conferences.conference', '=', 'comments.conference')
+                // ->where('conferences.conference', $request->conference)
+                ->where('conferences.conference', 'LIKE', '%' . $request->conference . '%')
+
                 ->whereBetween('conferences.user_created_at', [$request->start_date, $request->end_date])
                 ->orWhereBetween('conferences.download_count', [$request->start_date, $request->end_date])
                 ->orWhereBetween('conferences.email_sent_status', [$request->start_date, $request->end_date])
                 ->orWhereBetween('conferences.user_updated_at', [$request->start_date, $request->end_date])
+
                 ->groupBy('users.id', 'users.name', 'users.created_at', 'conferences.conference', 'conferences.user_id')
+                ->where(function ($query) use ($request) {
+                    // Include all users if $request->user_id is not provided
+
+                    // $query->where('users.id', $request->user_id);
+                    $query->where('conferences.conference', 'LIKE', '%' . $request->conference . '%');
+
+                    // $query->where('conferences.conference',$request->conference);
+
+
+                })
                 ->addBinding($request->start_date, 'select')
                 ->addBinding($request->end_date, 'select')
                 ->addBinding($request->start_date, 'select')
@@ -806,6 +929,10 @@ class AdminController extends Controller
                 ->addBinding($request->start_date, 'select')
                 ->addBinding($request->end_date, 'select')
                 ->get();
+
+
+
+
 
 
             return DataTables::of($result)
@@ -833,12 +960,126 @@ class AdminController extends Controller
                 ->make(true);
         }
 
+        //get particular user and particular conference
+        if ($request->user_id != 'All' && $request->conference != 'All') {
+
+
+            // dd($request);
+            $inserted_count = Conference::whereNotNull('user_created_at')
+                ->whereBetween('user_created_at', [$startDate, $endDate])
+                ->where('user_id', $request->user_id)
+                ->where('conferences.conference', 'LIKE', '%' . $request->conference . '%')
+
+                ->count();
+
+
+            $users_count = User::where('id', $request->user_id)
+                ->count();
+
+
+            $updated_count = Conference::whereNotNull('user_updated_at')
+                ->whereBetween('user_created_at', [$startDate, $endDate])
+                ->where('user_id', $request->user_id)
+                ->where('conference', $request->conference)
+                ->count();
+
+            $downloaded_count = Conference::whereNotNull('download_count')
+                ->whereBetween('user_downloaded_at', [$startDate, $endDate])
+                ->where('user_id', $request->user_id)
+                ->where('conference', $request->conference)
+                ->count();
+
+
+            $query = Conference::query();
+
+            // dd($request->user_id);
+
+
+            $query = Conference::query();
+            $result = $query
+                ->select([
+                    'users.id',
+                    'users.name',
+                    'users.created_at',
+                    'conferences.conference',
+                    DB::raw('COUNT(DISTINCT conferences.conference) AS conference_count'),
+                    DB::raw('COUNT(DISTINCT CASE WHEN conferences.user_created_at >= ? AND conferences.user_created_at <= ? THEN conferences.id END) AS inserted_count'),
+                    DB::raw('COUNT(DISTINCT CASE WHEN conferences.user_updated_at >= ? AND conferences.user_updated_at <= ? THEN conferences.id END) AS updated_count'),
+                    DB::raw('SUM(CASE WHEN conferences.download_count = "1" AND conferences.user_created_at BETWEEN ? AND ? THEN 1 ELSE 0 END) AS download_count'),
+                    DB::raw('SUM(CASE WHEN conferences.email_sent_status = "sent" THEN 1 ELSE 0 END) AS email_sent_count'),
+                    DB::raw('SUM(CASE WHEN conferences.email_sent_status = "pending" THEN 1 ELSE 0 END) AS email_pending_count'),
+                ])
+                ->leftJoin('users', 'users.id', '=', 'conferences.user_id')
+                ->where('users.id', $request->user_id)
+
+                // ->leftJoin('comments', 'conferences.conference', '=', 'comments.conference')
+                // ->where('conferences.conference', $request->conference)
+                ->where('conferences.conference', 'LIKE', '%' . $request->conference . '%')
+
+                ->whereBetween('conferences.user_created_at', [$request->start_date, $request->end_date])
+                ->orWhereBetween('conferences.download_count', [$request->start_date, $request->end_date])
+                ->orWhereBetween('conferences.email_sent_status', [$request->start_date, $request->end_date])
+                ->orWhereBetween('conferences.user_updated_at', [$request->start_date, $request->end_date])
+
+                ->groupBy('users.id', 'users.name', 'users.created_at', 'conferences.conference', 'conferences.user_id')
+                ->where(function ($query) use ($request) {
+                    // Include all users if $request->user_id is not provided
+
+                    $query->where('users.id', $request->user_id);
+                    $query->where('conferences.conference', 'LIKE', '%' . $request->conference . '%');
+
+                    // $query->where('conferences.conference',$request->conference);
+
+
+                })
+                ->addBinding($request->start_date, 'select')
+                ->addBinding($request->end_date, 'select')
+                ->addBinding($request->start_date, 'select')
+                ->addBinding($request->end_date, 'select')
+                ->addBinding($request->start_date, 'select')
+                ->addBinding($request->end_date, 'select')
+                ->get();
+
+            // Rest of your code...
+
+
+
+
+
+            return DataTables::of($result)
+
+                ->addColumn('client_positive_count', function ($row) use ($request) {
+                    $conference = $row->conference;
+                    $startDate = $request->start_date;
+                    $endDate = $request->end_date;
+                    $user_id = $row->id;
+                    return $row->positive_count($conference, $user_id, $startDate, $endDate);
+                })
+
+                ->addColumn('client_negative_count', function ($row) use ($request) {
+                    $conference = $row->conference;
+                    $startDate = $request->start_date;
+                    $endDate = $request->end_date;
+                    $user_id = $row->id;
+                    return $row->negative_count($conference, $user_id, $startDate, $endDate);
+                })
+
+                ->with('users_count', $users_count)
+                ->with('inserted_count', $inserted_count)
+                ->with('updated_count', $updated_count)
+                ->with('downloaded_count', $downloaded_count)
+                ->make(true);
+        }
+
+
+        //get particular user and
         if ($request->user_id != 'All' && $request->conference == 'All') {
 
+
+            // dd($request);
             $inserted_count = Conference::whereNotNull('user_created_at')
                 ->whereBetween('user_created_at', [$startDate, $endDate])
                 ->where('user_id', $request->user_id)
-                ->where('conference', $request->conference)
 
                 ->count();
 
@@ -850,21 +1091,20 @@ class AdminController extends Controller
             $updated_count = Conference::whereNotNull('user_updated_at')
                 ->whereBetween('user_created_at', [$startDate, $endDate])
                 ->where('user_id', $request->user_id)
-                ->where('conference', $request->conference)
                 ->count();
 
             $downloaded_count = Conference::whereNotNull('download_count')
                 ->whereBetween('user_downloaded_at', [$startDate, $endDate])
                 ->where('user_id', $request->user_id)
-                ->where('conference', $request->conference)
                 ->count();
 
 
             $query = Conference::query();
 
+            // dd($request->user_id);
+
 
             $query = Conference::query();
-
             $result = $query
                 ->select([
                     'users.id',
@@ -879,13 +1119,27 @@ class AdminController extends Controller
                     DB::raw('SUM(CASE WHEN conferences.email_sent_status = "pending" THEN 1 ELSE 0 END) AS email_pending_count'),
                 ])
                 ->leftJoin('users', 'users.id', '=', 'conferences.user_id')
-                ->leftJoin('comments', 'conferences.conference', '=', 'comments.conference')
-                ->where('users.id', $request->user_id)  // Replace $userId with the actual user ID
+                ->where('users.id', $request->user_id)
+
+                // ->leftJoin('comments', 'conferences.conference', '=', 'comments.conference')
+                // ->where('conferences.conference', $request->conference)
+
                 ->whereBetween('conferences.user_created_at', [$request->start_date, $request->end_date])
                 ->orWhereBetween('conferences.download_count', [$request->start_date, $request->end_date])
                 ->orWhereBetween('conferences.email_sent_status', [$request->start_date, $request->end_date])
                 ->orWhereBetween('conferences.user_updated_at', [$request->start_date, $request->end_date])
+
                 ->groupBy('users.id', 'users.name', 'users.created_at', 'conferences.conference', 'conferences.user_id')
+                ->where(function ($query) use ($request) {
+                    // Include all users if $request->user_id is not provided
+
+                    $query->where('users.id', $request->user_id);
+                    $query->where('conferences.conference', 'LIKE', '%' . $request->conference . '%');
+
+                    // $query->where('conferences.conference',$request->conference);
+
+
+                })
                 ->addBinding($request->start_date, 'select')
                 ->addBinding($request->end_date, 'select')
                 ->addBinding($request->start_date, 'select')
@@ -893,6 +1147,11 @@ class AdminController extends Controller
                 ->addBinding($request->start_date, 'select')
                 ->addBinding($request->end_date, 'select')
                 ->get();
+
+            // Rest of your code...
+
+
+
 
 
             return DataTables::of($result)
@@ -919,7 +1178,6 @@ class AdminController extends Controller
                 ->with('downloaded_count', $downloaded_count)
                 ->make(true);
         }
-
     }
 
 
@@ -1020,105 +1278,123 @@ class AdminController extends Controller
     public function updateData(Request $request)
     {
 
-
-        if (isset($request->selectedData)) {
-            ini_set('memory_limit', '1024M');
-            $today = Carbon::today();
-            $formattedDate = $today->format('Y-m-d');
-            $now = Carbon::now();
-            $auth_user_id = Auth::user()->id;
-            $currentDateTime = $now->toDateString();
-            $todayData = $request->selectedData;
-            $masterData = Conference::all();
-
-            $progress = 0;
-            $totalRecords = count($todayData);
-            $recordsProcessed = 0;
-
-
-            foreach ($todayData as $record) {
+        try {
+            if (isset($request->selectedData)) {
+                ini_set('memory_limit', '1024M');
+                $today = Carbon::today();
+                $formattedDate = $today->format('Y-m-d');
+                $now = Carbon::now();
+                $auth_user_id = Auth::user()->id;
+                $currentDateTime = $now->toDateString();
+                $todayData = $request->selectedData;
+                $masterData = Conference::all();
 
 
 
-                // Check if the record exists in the master table
-                $existingRecord = $masterData
-                    ->where('email', $record['email'])
-                    ->where('conference', $record['conference'])
-                    ->where('article', $record['article'])->first();
 
-                if ($existingRecord) {
-                    // Update the record
-                    $existingRecord->update([
-
-                        'name' => $record['name'],
-                        'email' => $record['email'],
-                        'article' => $record['article'],
-                        // 'conference' => $row['Conference'],
-                        'conference' => $record['conference'],
-                        'country' => $record['country'],
-                        'user_id' => $auth_user_id,
-                        'user_created_at' => $currentDateTime,
-                        'email_sent_date' => null,
-                        'email_sent_status' => $record['email_sent_status'],
-                        'moved_by' => $auth_user_id,
-                        // Update fields as needed
-                    ]);
+                $progress = 0;
+                $totalRecords = count($todayData);
+                $recordsProcessed = 0;
 
 
-                    $conference = htmlspecialchars_decode($record['conference']);
-                    $delete_record = ConferencesToday::where('email', $record['email'])
-                        ->where('conference', $conference)
+                foreach ($todayData as $record) {
+
+                    // dd($record);
+
+
+
+                    // Check if the record exists in the master table
+                    $existingRecord = $masterData
+                        ->where('email', $record['email'])
+                        ->where('conference', htmlspecialchars_decode($record['conference']))
                         ->where('article', $record['article'])->first();
 
-                    if ($delete_record) {
-                        $delete_record->delete();
+                    if ($existingRecord) {
+                        // Update the record
+                        $existingRecord->update([
+
+                            'name' => $record['name'],
+                            'email' => $record['email'],
+                            'article' => $record['article'],
+                            // 'conference' => $row['Conference'],
+                            'conference' => htmlspecialchars_decode($record['conference']),
+                            'country' => $record['country'],
+                            'user_id' => $auth_user_id,
+                            'user_created_at' =>  $record['user_created_at'],
+                            'user_updated_at' => $currentDateTime,
+                            'email_sent_date' => null,
+                            'email_sent_status' => $record['email_sent_status'],
+                            'moved_by' => $auth_user_id,
+                            // Update fields as needed
+                        ]);
+
+
+
+                        $conference = htmlspecialchars_decode($record['conference']);
+                        // dd($conference);
+                        $delete_record = ConferencesToday::where('email', $record['email'])
+                            ->where('conference', $conference)
+                            ->where('article', $record['article'])->first();
+
+                        if ($delete_record) {
+                            $delete_record->delete();
+                        }
+                    } else {
+                        // Insert the record
+                        $conference = htmlspecialchars_decode($record['conference']);
+
+                        Conference::create([
+                            'name' => $record['name'],
+                            'email' => $record['email'],
+                            'article' => $record['article'],
+                            // 'conference' => $row['Conference'],
+                            'conference' => $conference,
+                            'country' => $record['country'],
+                            'user_id' => $auth_user_id,
+
+                            'user_created_at' =>  $record['user_created_at'],
+                            'user_updated_at' => $currentDateTime,
+
+                            'email_sent_date' => null,
+                            'email_sent_status' => $record['email_sent_status'],
+                            'moved_by' => $auth_user_id,
+                        ]);
+
+
+
+
+
+                        $conference = htmlspecialchars_decode($record['conference']);
+                        $delete_record = ConferencesToday::where('email', $record['email'])
+                            ->where('conference', $conference)
+                            ->where('article', $record['article'])->first();
+
+                        if ($delete_record) {
+                            $delete_record->delete();
+                        }
                     }
-                } else {
-                    // Insert the record
-                    Conference::create([
-                        'name' => $record['name'],
-                        'email' => $record['email'],
-                        'article' => $record['article'],
-                        // 'conference' => $row['Conference'],
-                        'conference' => $record['conference'],
-                        'country' => $record['country'],
-                        'user_id' => $auth_user_id,
-                        'user_created_at' => $currentDateTime,
-                        'email_sent_date' => null,
-                        'email_sent_status' => $record['email_sent_status'],
-                        'moved_by' => $auth_user_id,
-                    ]);
 
 
-                    $conference = htmlspecialchars_decode($record['conference']);
-                    $delete_record = ConferencesToday::where('email', $record['email'])
-                        ->where('conference', $conference)
-                        ->where('article', $record['article'])->first();
 
-                    if ($delete_record) {
-                        $delete_record->delete();
-                    }
+
+                    $recordsProcessed++;
+                    $progress = round(($recordsProcessed / $totalRecords) * 100);
+
+                    // Send progress to frontend
+                    // echo "data: $progress\n\n";
+                    // ob_flush();
+                    // flush();
+                    // usleep(100000);
                 }
+                // Ensure that the final progress is 100%
+                // echo "data: 100\n\n";
+                // ob_flush();
+                // flush();
 
-
-
-
-                $recordsProcessed++;
-                $progress = round(($recordsProcessed / $totalRecords) * 100);
-
-                // // Send progress to frontend
-                // echo "data: $progress\n\n";
-                // // ob_flush();
-                // // flush();
-                // usleep(100000);
+                return response()->json(['message' => 'Data updated successfully']);
             }
-            // // Ensure that the final progress is 100%
-            // echo "data: 100\n\n";
-            // // ob_flush();
-            // // flush();
-
-            return response()->json(['message' => 'Data updated successfully']);
-        } else {
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 500);
         }
     }
 
@@ -1135,9 +1411,9 @@ class AdminController extends Controller
     public function show()
     {
 
-        $conferences = ConferencesData::all();
+        $all_conferences = ConferencesData::all();
 
-        return view('admin.upload', compact('conferences'));
+        return view('admin.upload', compact('all_conferences'));
     }
 
     public function getVerifyOTP()
@@ -1281,13 +1557,73 @@ class AdminController extends Controller
         }
     }
 
+
+
+    public function getStatusCount($status=null){
+
+        $positivequery = Conference::query();
+
+        $today_positve_count = $positivequery->join('comments', function ($join) {
+            $join->on('comments.conference', '=', 'conferences.conference')
+                ->on('comments.email', '=', 'conferences.email')
+                ->on('comments.article', '=', 'conferences.article');
+        });
+
+        $positive_latestComments = $positivequery->get();
+        $PositiveuniqueConferences = $positive_latestComments
+            ->unique(function ($item) {
+                return $item->email . $item->article . $item->conference;
+            })
+            ->sortByDesc('created_at')->where('client_status_id', $status);
+
+        $positivequery = $PositiveuniqueConferences;
+
+        $positive_count=$positivequery->count();
+
+        return $positive_count;
+
+
+    }
+
     public function dashboard()
     {
         $users_data = Conference::latest()->paginate(10);
 
-        $countries = Conference::distinct()->pluck('country',)->toArray();
+        $today = Carbon::today();
 
-        return view('admin.dashboard', compact('countries'));
+        $today_conferences_count = Conference::where('user_created_at', $today)
+        ->distinct()
+        ->pluck('conference') // Assuming 'name' is the column containing conference names
+        ->count();
+
+
+        $today_data_collected_count = Conference::whereDate('created_at', $today)
+        // Assuming 'name' is the column containing conference names
+        ->count();
+
+        $today_sent_mail_count = Conference::where('email_sent_status', 'sent')
+        ->where('email_sent_date',$today)
+        // Assuming 'name' is the column containing conference names
+        ->count();
+
+        $today_pending_mail_count = Conference::where('email_sent_status', 'pending')
+        ->where('email_sent_date',$today)
+        ->count();
+
+        $positive_count=$this->getStatusCount(1);
+        $negative_count=$this->getStatusCount(2);
+        $followup_count=$this->getStatusCount(3);
+        $waiting_for_payment_count=$this->getStatusCount(4);
+        $converted_count=$this->getStatusCount(5);
+        $rejected_count=$this->getStatusCount(5);
+        $countries = Conference::distinct()->pluck('country')->toArray();
+
+        // $all_conferences=ConferencesData::all();
+
+        $all_conferences = Conference::getConferenceNameWithCount();
+
+
+        return view('admin.dashboard', compact('all_conferences','countries','today_conferences_count','today_data_collected_count','today_sent_mail_count','today_pending_mail_count','positive_count','negative_count','followup_count','waiting_for_payment_count','converted_count','rejected_count'));
     }
 
 
@@ -1385,11 +1721,9 @@ class AdminController extends Controller
         $user->delete();
         return redirect()->route('admin.dashboard')->with('success', 'User Deleted Successfully.');
     }
-
-    public function upload(Request $request)
+    public function uploadold(Request $request)
     {
-        
-        try {
+
         $now = Carbon::now();
 
 
@@ -1446,12 +1780,13 @@ class AdminController extends Controller
                 // If the record exists, update it
                 $model->update([
                     'name' => $row['Name'],
-                    'email' => $row['Email'],
-                    'article' => $row['Article'],
-                    'conference' => $row['Conference'],
+                    // 'email' => $row['Email'],
+                    // 'article' => $row['Article'],
+                    // 'conference' => $row['Conference'],
                     'country' => $row['Country'],
+
                     'user_id' => $request->user()->id,
-                    'email_sent_status'=>$request->email_sent_status,
+
                     'user_updated_at' => $currentDateTime,
                     // 'updated_at'=>'',
                 ]);
@@ -1470,9 +1805,7 @@ class AdminController extends Controller
                     'user_id' => $request->user()->id,
 
                     'user_created_at' => $currentDateTime,
-                    'email_sent_status'=>$request->email_sent_status,
-
-                    // 'updated_at'=>'',
+                    'user_updated_at' => $currentDateTime,
 
                 ]);
                 $insertcount++;
@@ -1491,15 +1824,155 @@ class AdminController extends Controller
             'updated_count' => 'Updated Records Count: ' . $update_count,
             'message' => 'Data Uploaded Successfully',
         ]);
-    } 
-    catch (\Exception $e) {
-        return response()->json(['message' => $e->getMessage()], 500);
     }
 
-        
+    public function upload(Request $request)
+
+
+    {
+
+
+
+        $now = Carbon::now();
+
+
+        $currentDateTime = $now->toDateString();
+
+
+
+        $userID = Auth::id();
+        // dd($userID);
+        $request->validate([
+            'csvFile' => 'required|mimes:csv,txt|max:10000000',
+            'conference' => 'required',
+        ]);
+
+
+
+        $file = $request->file('csvFile');
+        $path = $file->getRealPath();
+
+        $csv = Reader::createFromPath($path, 'r');
+        $headers = $csv->fetchOne();
+
+        // dd($headers);
+
+        $csv->setHeaderOffset(0);
+
+        //if upload from file upload and move to public uploads
+
+        // $file = $request->file('csvFile');
+
+        // $filePath = $file->move(public_path('uploads'), $file->getClientOriginalName()); // Move the file to 'public/uploads' directory
+
+        // $csv = Reader::createFromPath($filePath, 'r');
+        // $csv->setHeaderOffset(0); // Set the CSV header row
+
+
+        $update_count = 0;
+        $errorCount = 0;
+        $insertcount = 0;
+
+        $check_conference = Conference::where('conference', 'like', '%' . $request->conference . '%')->first();
+
+        if ($check_conference) {
+            $Particular_Conference_data = Conference::where('conference', 'like', '%' . $request->conference . '%')->get();
+
+            if ($Particular_Conference_data->count() >= 1) {
+                foreach ($csv as $row) {
+
+                    $email = $row['Email'];
+                    $conference = $row['Conference'];
+                    $article = $row['Article'];
+
+
+
+                    // Check if the record exists based on email, conference, and article in $Particular_Conference_data
+                    $existingRecord = $Particular_Conference_data->first(function ($item) use ($email, $conference, $article) {
+                        return $item->email == $email
+                            && $item->conference == $conference
+                            && $item->article == $article;
+                    });
+
+                    // dd($existingRecord);
+
+                    if ($existingRecord) {
+                        // If the record exists, update it
+                        $existingRecord->update([
+                            'name' => $row['Name'],
+                            'country' => $row['Country'],
+                            'user_id' => $request->user()->id,
+                            'user_updated_at' => $currentDateTime,
+                            'email_sent_status' => $request->email_sent_status,
+
+                        ]);
+                        $update_count++;
+                    } else {
+                        // If the record doesn't exist, create a new one
+                        Conference::create([
+                            'name' => $row['Name'],
+                            'email' => $row['Email'],
+                            'article' => $row['Article'],
+                            'conference' => $request->conference,
+                            'country' => $row['Country'],
+                            'user_id' => $request->user()->id,
+                            'user_created_at' => $currentDateTime,
+                            'user_updated_at' => $currentDateTime,
+                            'email_sent_status' => $request->email_sent_status,
+
+                        ]);
+                        $insertcount++;
+                    }
+                }
+            }
+        } else {
+
+            foreach ($csv as $row) {
+                Conference::create([
+
+                    'name' => $row['Name'],
+                    'email' => $row['Email'],
+                    'article' => $row['Article'],
+                    // 'conference' => $row['Conference'],
+                    'conference' => $request->conference,
+                    'country' => $row['Country'],
+                    'user_id' => $request->user()->id,
+
+                    'user_created_at' => $currentDateTime,
+                    // 'user_updated_at' => $currentDateTime,
+                    'email_sent_status' => $request->email_sent_status,
+
+
+                ]);
+                $insertcount++;
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+        //if upload from uploads
+        // if (file_exists($filePath)) {
+        //     unlink($filePath);
+        // } 
+
+
+        return response()->json([
+            'inserted_count' => 'Inserted Records Count: ' . $insertcount,
+            'updated_count' => 'Updated Records Count: ' . $update_count,
+            'message' => 'Data Uploaded Successfully',
+        ]);
     }
 
-    public function users(Request $request)
+    public function usersold(Request $request)
     {
 
 
@@ -2137,6 +2610,85 @@ class AdminController extends Controller
             ->rawColumns(['posted_by'])
             ->make(true);
     }
+
+    public function users(Request $request)
+    {
+        $query = Conference::query();
+
+        if ($request->search) {
+            $query->where('email', 'like', '%' . $request->search . '%');
+        } else {
+            $this->applyFilters($query, $request);
+        }
+
+        return Datatables::of($query)
+            ->addIndexColumn()
+            ->addColumn('posted_by', function ($row) {
+                return $row->postedby->name ?? '';
+            })
+            ->addColumn('comments_count', function ($row) {
+                return $row->comments();
+            })
+            ->addColumn('client_status', function ($row) {
+                return $row->client_status();
+            })
+            ->rawColumns(['posted_by'])
+            ->make(true);
+    }
+
+    private function applyFilters($query, $request)
+    {
+
+
+
+        // $latestComments = $query->get();
+
+        $query->when($request->email_status != 'All', function ($query) use ($request) {
+            // dd($request->email_status);
+            $query->where('email_sent_status', 'like', '%' . $request->email_status . '%');
+        });
+
+        $query->when($request->country != 'All', function ($query) use ($request) {
+            $query->where('country', 'like', '%' . $request->country . '%');
+        });
+
+        $query->when($request->conference != 'All', function ($query) use ($request) {
+            $query->where('conference', 'like', '%' . $request->conference . '%');
+        });
+
+        $query->when($request->article != 'All', function ($query) use ($request) {
+            $query->where('article', 'like', '%' . $request->article . '%');
+        });
+
+
+
+        $query->when($request->email_sent_from_date != '', function ($query) use ($request) {
+            $query->whereBetween('email_sent_date', [$request->email_sent_from_date, $request->email_sent_to_date]);
+        });
+
+        $query->when($request->from_date != '', function ($query) use ($request) {
+
+            // dd($request->user_created_at);
+            $query->whereBetween('user_created_at', [$request->from_date, $request->to_date]);
+        });
+
+
+
+        $query->when($request->user != 'All', function ($query) use ($request) {
+            $query->where('user_id', $request->user);
+        });
+
+        $query->when($request->client_status != 'All', function ($query) use ($request) {
+            $query->join('comments', function ($join) {
+                $join->on('comments.conference', '=', 'conferences.conference')
+                    ->on('comments.email', '=', 'conferences.email')
+                    ->on('comments.article', '=', 'conferences.article');
+            });
+            $query->where('client_status_id', $request->client_status);
+        });
+    }
+
+
 
     public function conferences(Request $request)
     {

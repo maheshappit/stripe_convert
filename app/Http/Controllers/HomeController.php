@@ -447,15 +447,82 @@ class HomeController extends Controller
 
 
 
+    public function getStatusCount($status=null){
+
+        $positivequery = Conference::query();
+
+        $today_positve_count = $positivequery->join('comments', function ($join) {
+            $join->on('comments.conference', '=', 'conferences.conference')
+                ->on('comments.email', '=', 'conferences.email')
+                ->on('comments.article', '=', 'conferences.article');
+        });
+
+        $positive_latestComments = $positivequery->get();
+        $PositiveuniqueConferences = $positive_latestComments
+            ->unique(function ($item) {
+                return $item->email . $item->article . $item->conference;
+            })
+            ->sortByDesc('created_at')->where('client_status_id', $status);
+
+        $positivequery = $PositiveuniqueConferences;
+
+        $positive_count=$positivequery->count();
+
+        return $positive_count;
+
+
+    }
 
     public function index()
     {
 
         $conferences = ConferencesData::all();
 
+        $all_conferences_count = Conference::all()->count();
+
+
         $countries = Conference::distinct()->pluck('country',)->toArray();
         $users = User::all();
-        return view('home', compact('countries', 'users', 'conferences'));
+
+
+        $users_data = Conference::latest()->paginate(10);
+
+        
+
+        $today = Carbon::today();
+
+        $today_conferences_count = Conference::where('user_created_at', $today)
+        ->distinct()
+        ->pluck('conference') // Assuming 'name' is the column containing conference names
+        ->count();
+
+
+        $today_data_collected_count = Conference::whereDate('created_at', $today)
+        // Assuming 'name' is the column containing conference names
+        ->count();
+
+        $today_sent_mail_count = Conference::where('email_sent_status', 'sent')
+        ->where('email_sent_date',$today)
+        // Assuming 'name' is the column containing conference names
+        ->count();
+
+        $today_pending_mail_count = Conference::where('email_sent_status', 'pending')
+        ->where('email_sent_date',$today)
+        ->count();
+
+        $positive_count=$this->getStatusCount(1);
+        $negative_count=$this->getStatusCount(2);
+        $followup_count=$this->getStatusCount(3);
+        $waiting_for_payment_count=$this->getStatusCount(4);
+        $converted_count=$this->getStatusCount(5);
+        $rejected_count=$this->getStatusCount(5);
+        $countries = Conference::distinct()->pluck('country')->toArray();
+
+        // $all_conferences=ConferencesData::all();
+
+        $all_conferences = Conference::getConferenceNameWithCount();
+
+        return view('home', compact('countries', 'users', 'conferences','all_conferences_count','all_conferences','today_conferences_count','today_data_collected_count','today_sent_mail_count','today_pending_mail_count','positive_count','negative_count'));
     }
 
     public function edit(Request $request)
@@ -464,9 +531,11 @@ class HomeController extends Controller
 
         $clientStatuses = ClientStatus::pluck('name', 'id')->all();
 
+        $all_conferences=ConferencesData::all();
 
 
-        return view('edit', compact('user', 'clientStatuses'));
+
+        return view('edit', compact('user', 'clientStatuses','all_conferences'));
     }
 
 
@@ -479,6 +548,7 @@ class HomeController extends Controller
         $user = Conference::find($request->id);
         $validator = Validator::make($request->all(), [
             'name' => 'required',
+            'client_status_id'=>'required',
         ]);
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
@@ -489,7 +559,7 @@ class HomeController extends Controller
             $user->update([
                 'name' => $request->name,
                 'country' => $request->country,
-                'updated_at' => $currentDateTime,
+                'user_updated_at' => $currentDateTime,
             ]);
 
 
@@ -504,6 +574,37 @@ class HomeController extends Controller
                     'client_status_id' => $request->client_status_id,
                     'comment_created_date' => $currentDateTime
                 ]);
+            }
+
+            if(isset($request->followup_date)){
+
+
+                $validator = Validator::make(
+                    $request->all(),
+                    [
+                        'followup_date' => 'required|string|max:255',
+                        'followup_type' => 'required|string|max:255',
+        
+                    ],
+        
+                );
+
+                if ($validator->fails()) {
+                    return response()->json(['errors' => $validator->errors()], 422);
+                } else {
+
+                followup::create([
+                    'article' => $request->article,
+                    'conference' => $request->conference,
+                    'email' => $request->email,
+                    'followup_date' => $request->followup_date,
+                    'note'=>$request->note,
+                    'name'=>$request->name,
+                    'followup_type' => $request->followup_type,
+                    'followup_created_date' => $currentDateTime
+                ]);
+            }
+
             }
 
 
