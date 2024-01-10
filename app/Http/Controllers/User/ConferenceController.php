@@ -24,7 +24,7 @@ class ConferenceController extends Controller
     public function index()
     {
 
-        $conferences = Conference::all();
+        $conferences = ConferencesData::all();
         $countries = Conference::distinct()->pluck('country',)->toArray();
         $users = User::all();
 
