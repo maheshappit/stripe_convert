@@ -32,6 +32,23 @@
     <title>Stripe Conferences</title>
 </head>
 
+<style>
+    .custom-button {
+    padding: 8px 16px;
+    font-size: 14px;
+    background-color: blue;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.custom-button:hover {
+    background-color: darkblue;
+}
+
+</style>
+
 
 <script>
     $(document).ready(function() {

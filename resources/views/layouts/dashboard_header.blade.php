@@ -212,7 +212,7 @@
                             <hr class="dropdown-divider">
                         </li>
                         <li>
-                            <a class="dropdown-item" href="#">
+                            <a class="dropdown-item" href="{{ route('logout') }}" >
                                 <div class="d-flex align-items-center">
                                     <div class="">
                                         <i class="bi bi-lock-fill"></i>

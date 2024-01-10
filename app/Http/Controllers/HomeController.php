@@ -59,7 +59,7 @@ class HomeController extends Controller
     {
 
 
-        $countries = Conference::distinct()->pluck('country',)->toArray();
+        $countries = Conference::distinct()->pluck('country')->toArray();
         $users = User::all();
 
         return view('user.showtodaydata', compact('countries', 'users'));
@@ -476,9 +476,13 @@ class HomeController extends Controller
     public function index()
     {
 
-        $conferences = ConferencesData::all();
+        $all_conferences = Conference::getConferenceNameWithCount();
+        
+                $conferences = ConferencesData::all();
 
-        $all_conferences_count = Conference::all()->count();
+        
+
+        $all_conferences_count = Conference::getConferenceNameWithCount();
 
 
         $countries = Conference::distinct()->pluck('country',)->toArray();
@@ -520,7 +524,9 @@ class HomeController extends Controller
 
         // $all_conferences=ConferencesData::all();
 
-        $all_conferences = Conference::getConferenceNameWithCount();
+        // $all_conferences = Conference::getConferenceNameWithCount();
+        
+        // dd($countries);
 
         return view('home', compact('countries', 'users', 'conferences','all_conferences_count','all_conferences','today_conferences_count','today_data_collected_count','today_sent_mail_count','today_pending_mail_count','positive_count','negative_count'));
     }

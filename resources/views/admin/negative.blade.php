@@ -455,7 +455,7 @@
                             const article = row.article;
                             const email = row.email;
                             const name=row.name;
-                            return `<button class="custom-button" onclick="AddFollowmakeAjaxCall('${conference}', '${article}', '${email}','${name}')">Add Follow up</button>`;
+                            return `<button class="custom-button" onclick="AddFollowNegativemakeAjaxCall('${conference}', '${article}', '${email}','${name}')">Add Follow up</button>`;
                         } else {
                             // Optionally, you can provide an alternative content or an empty string if you don't want to show anything.
                             return '';
@@ -693,6 +693,208 @@
 
 
     });
+</script>
+
+
+<script>
+
+function 
+
+
+AddFollowNegativemakeAjaxCall(conference,article,email,name) {
+    const url = `followups?conference=${conference}&article=${article}&email=${email}&name=${name}`;
+
+        // Make an AJAX request to fetch comments
+        fetch(url)  // Update the URL to your actual API endpoint
+            .then(response => response.json())
+            .then(data => {
+                console.log(name,'my name');
+
+                document.getElementById('articleInput2').value = article;
+                document.getElementById('conferenceInput2').value = conference;
+                document.getElementById('emailInput2').value =email;
+                document.getElementById('nameInput2').value =name;
+
+
+
+
+             
+
+
+                // console.log(data.comments[0].article);
+
+
+                // Update the modal content with comments
+                updateModalFollowupContent3(data.followups);
+            })
+            .catch(error => console.error('Error fetching comments:', error));
+
+        // Display the modal
+        document.getElementById('ViewFollowNegativeModal').style.display = 'block';
+    }
+                    $(document).ready(function() {
+                        $('.country').select2();
+                        $('.conference').select2();
+                     
+                    });
+                </script>
+
+<script>
+
+
+function openfollowViewModal() {
+            
+            var viewmodal = document.getElementById('ViewFollowNegativeModal');
+            viewmodal.style.display = 'block';
+        }
+
+        function closeFollowViewModal() {
+            var viewmodal = document.getElementById('ViewFollowNegativeModal');
+            viewmodal.style.display = 'none';
+        }
+
+
+
+document.addEventListener("DOMContentLoaded", function() {
+            // Add an event listener to the button
+            document.getElementById("formNegativesubmitBtn").addEventListener("click", function() {
+
+                // Get the form element
+
+        
+                var followupnegativeForm = document.getElementById("NegativefollowupForm");
+
+                // Toggle the "hidden" class to show/hide the form
+                followupnegativeForm.classList.toggle("hidden");
+
+                // Change the button text from "Add" to "Save"
+                var mynewbutton = this.innerText;
+                this.innerText = mynewbutton === "Add" ? "Save" : "Add";
+
+                if (this.innerText === "Add") {
+                saveForm3();
+            }
+            });
+        });
+
+      
+
+        function updateModalFollowupContent3(followups) {
+
+            // Get the comments container
+
+            var commentsContainer = document.getElementById('FollowupNegativecommentsContainer');
+
+            // Clear existing content
+            commentsContainer.innerHTML = '';
+
+            // Iterate through comments and append them to the container
+            followups.forEach(followup => {
+                // Create a card element for each comment
+                var cardDiv = document.createElement('div');
+                cardDiv.classList.add('comment-card'); // Add a CSS class for styling if needed
+
+                cardDiv.innerHTML = `
+        <p><b>Follow Up Date:</b> <span style="margin-right:50px" id="clientStatus${comment.id}">${followup.followup_date}</span>
+    
+        <span style="margin-right:50px"> <b> Follow Up Type:</b> ${followup.followup_type} </span>
+       <span style="margin-right:50px"> <b>Followup Email:</b> ${followup.email} </span>
+        </p>
+          <b> Note: </b> ${followup.note}
+        </p>
+
+        `;
+
+               
+
+
+                // Append the card to the container
+                commentsContainer.appendChild(cardDiv);
+            });
+        }
+
+        
+        
+
+        function saveForm3() {
+            var formData = $('#followupForm').serialize(); // Serialize form data
+            const article_id = $('#articleInput2').val();
+
+
+            const email_id = $('#emailInput2').val();
+            const conference_id = $('#conferenceInput2').val();
+            const client_status_id = $('#client_status_id2').val();
+            const comment = $('#comment').val();
+            const followup_date = $('#negative_followup_date').val();
+            const followup_type = $('#negative_followup_type').val();
+            const note = $('#negative_note').val();
+            const name = $('#nameInput2').val();
+
+
+            $.ajax({
+                type: 'POST',
+                url: '{{route('admin.add.followupdata')}}',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: {
+                    article: article_id,
+                    email: email_id,
+                    conference: conference_id,
+                    followup_date:followup_date,
+                    followup_type:followup_type,
+                    note:note,
+                    name:name
+
+                },
+                success: function(response) {
+                    // Handle success, if needed
+                    console.log(response);
+                    toastr.success(response.message);
+
+                    $('#client_status_id').val('');
+                    $('#comment').val('');
+                    $('#emailInput2').val();
+                    $('#conferenceInput2').val();
+                    $('#client_status_id2').val();
+                    $('#comment').val();
+                    $('#followup_date_negative').val();
+                    $('#followup_type').val();
+                    $('#note').val();
+
+                    console.log(response.followups);
+
+
+                    updateModalFollowupContent3(response.followups);
+
+
+                    // If submission is successful, hide the form and change button text back to "Add"
+                    $('#NegativefollowupForm').addClass('hidden');
+                    $('#formNegativesubmitBtn').text('Add');
+                },
+                error: function(xhr, status, error) {
+
+                    var errors = xhr.responseJSON.errors;
+                    handleValidationErrors(errors);
+                },
+            });
+        }
+
+        function handleValidationErrors(errors) {
+            // Display validation errors as toasts
+            for (var field in errors) {
+                if (errors.hasOwnProperty(field)) {
+                    toastr.error(errors[field][0]);
+                }
+            }
+        }
+
+
+        // Add an event listener to the "Save" button
+       
+
+    
+
 </script>
 
 

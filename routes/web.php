@@ -35,7 +35,7 @@ Route::middleware(['checkUserRole'])->group(function () {
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
     Route::any('upload',[CsvController::class,'upload'])->name('upload');
 
-    Route::get('edit', [App\Http\Controllers\HomeController::class, 'edit'])->name('user.edit');
+    Route::get('user/edit', [App\Http\Controllers\HomeController::class, 'edit'])->name('user.edit');
     Route::get('/conferences',[ConferenceController::class,'index'])->name('show.conferences');
     Route::post('conferenceDetails/upload',[ConferenceController::class,'store'])->name('conferencedetails.save');
     Route::any('/user/update', [App\Http\Controllers\HomeController::class, 'update'])->name('user.update');
@@ -90,7 +90,7 @@ Route::group(['middleware'=>'admin'],function(){
     Route::any('admin/all-articles/{id}', [AdminController::class,'allTopics'])->name('admin.all.articles');
     Route::post('admin/user/create', [AdminController::class,'createUser'])->name('admin.user.create');
 
-    Route::get('admin/edit', [AdminController::class, 'Useredit'])->name('admin.user.edit');
+    Route::get('edit', [AdminController::class, 'Useredit'])->name('admin.user.edit');
     Route::any('admin/client/update', [AdminController::class, 'ClientUpdate'])->name('admin.client.update');
     Route::get('admin/comments', [AdminController::class,'getComments'])->name('admin.get.comments');
     Route::any('add-new-comments', [AdminController::class,'addNewComments'])->name('admin.add.comments');

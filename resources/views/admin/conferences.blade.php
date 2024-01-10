@@ -30,6 +30,8 @@
     <link href="assets/css/semi-dark.css" rel="stylesheet">
     <link href="assets/css/header-colors.css" rel="stylesheet">
     <title>Stripe Conferences</title>
+
+
 </head>
 
 
@@ -251,6 +253,93 @@
         });
     });
 </script>
+
+<script>
+        function resetSelect() {
+            alert();
+            // Get the select element by its id
+            var selectElement = document.getElementById('country');
+
+            // Set the selectedIndex to 0 to reset to the first option
+            selectElement.val().reset();
+        }
+
+
+
+        function openViewModal() {
+            var viewmodal = document.getElementById('ViewCommentsModal');
+            viewmodal.style.display = 'block';
+        }
+
+        function closeViewModal() {
+            var viewmodal = document.getElementById('ViewCommentsModal');
+            viewmodal.style.display = 'none';
+        }
+
+
+        function updateModalContent2(comments) {
+            // Get the comments container
+            var commentsContainer = document.getElementById('commentsContainer');
+
+            // Clear existing content
+            commentsContainer.innerHTML = '';
+
+            // Iterate through comments and append them to the container
+            comments.forEach(comment => {
+                // Create a card element for each comment
+                var cardDiv = document.createElement('div');
+                cardDiv.classList.add('comment-card'); // Add a CSS class for styling if needed
+
+                cardDiv.innerHTML = `
+        <p><b>Client Status:</b> <span style="margin-right:50px" id="clientStatus${comment.id}">${comment.name}</span>
+    
+        <span style="margin-right:50px"> <b> Email:</b> ${comment.email} </span>
+       <span style="margin-right:50px"> <b> Date:</b> ${comment.comment_created_date} </span>
+        </p>
+          <b> Comment: </b> ${comment.comment}
+        </p>
+
+        `;
+
+                var clientStatusSpan = cardDiv.querySelector(`#clientStatus${comment.id}`);
+                if (comment.name === 'Positive') {
+                    clientStatusSpan.style.color = 'green';
+                    // Add more styles as needed
+                } else if (comment.name === 'Negative') {
+                    clientStatusSpan.style.color = 'red';
+                    // Add more styles as needed
+                }
+
+
+                // Append the card to the container
+                commentsContainer.appendChild(cardDiv);
+            });
+        }
+
+        function makeAjaxCall(conference,article,email) {
+    const url = `comments?conference=${conference}&article=${article}&email=${email}`;
+
+        // Make an AJAX request to fetch comments
+        fetch(url)  // Update the URL to your actual API endpoint
+            .then(response => response.json())
+            .then(data => {
+
+                console.log(data.comments[0].article);
+                document.getElementById('articleInput').value = data.comments[0].article;
+                document.getElementById('conferenceInput').value = data.comments[0].conference;
+                document.getElementById('emailInput').value = data.comments[0].email;
+
+                // Update the modal content with comments
+                updateModalContent2(data.comments);
+            })
+            .catch(error => console.error('Error fetching comments:', error));
+
+        // Display the modal
+        document.getElementById('ViewCommentsModal').style.display = 'block';
+    }
+    </script>
+
+
 
 <script>
     $(function() {

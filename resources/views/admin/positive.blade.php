@@ -696,6 +696,144 @@
 </script>
 
 
+<script>
+    function resetSelect() {
+        // Get the select element by its id
+        var selectElement = document.getElementById('country');
+
+        // Set the selectedIndex to 0 to reset to the first option
+        selectElement.val().reset();
+    }
+
+
+
+    function openfollowViewModal() {
+
+        var viewmodal = document.getElementById('ViewFollowModal');
+        viewmodal.style.display = 'block';
+    }
+
+    function closeFollowViewModal() {
+        var viewmodal = document.getElementById('ViewFollowModal');
+        viewmodal.style.display = 'none';
+    }
+
+
+    function updatefollowModalContent2(comments) {
+        // Get the comments container
+        var commentsContainer = document.getElementById('commentsContainer');
+
+        // Clear existing content
+        commentsContainer.innerHTML = '';
+
+        // Iterate through comments and append them to the container
+        comments.forEach(comment => {
+            // Create a card element for each comment
+            var cardDiv = document.createElement('div');
+            cardDiv.classList.add('comment-card'); // Add a CSS class for styling if needed
+
+            cardDiv.innerHTML = `
+        <p><b>Client Status:</b> <span style="margin-right:50px" id="clientStatus${comment.id}">${comment.name}</span>
+    
+        <span style="margin-right:50px"> <b> Email:</b> ${comment.email} </span>
+       <span style="margin-right:50px"> <b> Date:</b> ${comment.comment_created_date} </span>
+        </p>
+          <b> Comment: </b> ${comment.comment}
+        </p>
+
+        `;
+
+            var clientStatusSpan = cardDiv.querySelector(`#clientStatus${comment.id}`);
+            if (comment.name === 'Positive') {
+                clientStatusSpan.style.color = 'green';
+                // Add more styles as needed
+            } else if (comment.name === 'Negative') {
+                clientStatusSpan.style.color = 'red';
+                // Add more styles as needed
+            }
+
+
+            // Append the card to the container
+            commentsContainer.appendChild(cardDiv);
+        });
+    }
+
+    function AddFollowmakeAjaxCall(conference, article, email, name) {
+
+        const url = `followups?conference=${conference}&article=${article}&email=${email}&name=${name}`;
+
+        // Make an AJAX request to fetch comments
+        fetch(url) // Update the URL to your actual API endpoint
+            .then(response => response.json())
+            .then(data => {
+                console.log(data.followups);
+
+                document.getElementById('articleInput2').value = article;
+                document.getElementById('conferenceInput2').value = conference;
+                document.getElementById('emailInput2').value = email;
+
+                document.getElementById('nameInput2').value = name;
+
+
+
+
+
+
+                // console.log(data.comments[0].article);
+
+
+                // Update the modal content with comments
+                updateFollowModalContent(data.followups);
+            })
+            .catch(error => console.error('Error fetching comments:', error));
+
+        // Display the modal
+        document.getElementById('ViewFollowModal').style.display = 'block';
+    }
+
+
+    function updateFollowModalContent(followups) {
+
+        console.log(followups);
+        // Get the comments container
+        const commentsContainer = document.getElementById('FollowupcommentsContainer');
+
+        // Clear existing content
+        commentsContainer.innerHTML = '';
+
+        // Iterate through comments and append them to the container
+        followups.forEach(followup => {
+            // Create a card element for each comment
+            var cardDiv = document.createElement('div');
+            cardDiv.classList.add('comment-card'); // Add a CSS class for styling if needed
+
+            cardDiv.innerHTML = `
+        <p><b>Follow Up Date:</b> <span style="margin-right:50px" id="clientStatus${comment.id}">${followup.followup_date}</span>
+    
+        <span style="margin-right:50px"> <b> Follow Up Type:</b> ${followup.followup_type} </span>
+       <span style="margin-right:50px"> <b>Followup Email:</b> ${followup.email} </span>
+        </p>
+          <b> Note: </b> ${followup.note}
+        </p>
+
+        `;
+
+            var clientStatusSpan = cardDiv.querySelector(`#clientStatus${comment.id}`);
+            if (comment.name === 'Positive') {
+                clientStatusSpan.style.color = 'green';
+                // Add more styles as needed
+            } else if (comment.name === 'Negative') {
+                clientStatusSpan.style.color = 'red';
+                // Add more styles as needed
+            }
+
+
+            // Append the card to the container
+            commentsContainer.appendChild(cardDiv);
+        });
+    }
+</script>
+
 <div class="wrapper">
     <!--start top header-->
 

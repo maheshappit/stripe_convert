@@ -3,7 +3,7 @@
 
 <head>
 
-<meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
 
     <!-- data table links -->
@@ -12,26 +12,26 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
 
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script> -->
-    
 
 
-     <!-- jQuery -->
-     <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-<!-- DataTables CSS -->
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
+    <!-- jQuery -->
+    <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-<!-- DataTables JS -->
-<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
 
-<!-- DataTables Buttons CSS -->
-<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css">
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
 
-<!-- DataTables Buttons JS -->
-<script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-    
+    <!-- DataTables Buttons CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css">
+
+    <!-- DataTables Buttons JS -->
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+
 
 
     <!-- //toastr links -->
@@ -112,6 +112,204 @@
             }
         }
     </style>
+
+
+    <style>
+        .add-button {
+            width: 100px;
+        }
+
+        table.dataTable>tbody>tr {
+            /* display: inline-block; */
+            white-space: nowrap;
+            /* Prevent line breaks within the row */
+            margin-right: 10px;
+            height: auto;
+            /* Add spacing between rows if necessary */
+
+        }
+
+        .custom-button {
+            padding: 8px 16px;
+            font-size: 14px;
+            background-color: blue;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .custom-button:hover {
+            background-color: darkblue;
+        }
+
+        thead {
+            border-top: none;
+            font-size: small;
+        }
+
+        tbody tr>td {
+            border-top: none;
+            font-size: small;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+
+
+        .toast-message {
+            color: black
+        }
+
+        .modal {
+            position: fixed;
+            top: -145px !important;
+            left: 0;
+            width: 100%;
+            height: 810px !important;
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 30px
+        }
+
+        .close:hover {
+            color: black;
+        }
+
+        .ViewCommentsModal {
+            display: none;
+            position: fixed;
+            top: -138px;
+            left: 0;
+            width: 100%;
+            height: 500% !important;
+            background-color: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            overflow: auto;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 20px;
+            max-width: 80%;
+            max-height: 80%;
+            overflow-y: auto;
+            border-radius: 5px;
+        }
+
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+
+        .comment-card {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            /* Add more styling as needed */
+        }
+
+        .ViewFollowModal {
+            display: none;
+            position: fixed;
+            top: -138px;
+            left: 0;
+            width: 100%;
+            height: 280% !important;
+            background-color: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            overflow: auto;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 20px;
+            max-width: 80%;
+            max-height: 80%;
+            overflow-y: auto;
+            border-radius: 5px;
+        }
+
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+
+        .comment-card {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            /* Add more styling as needed */
+        }
+
+        .add-button {
+            top: 0;
+            right: 150px;
+            margin: 10px;
+            /* Adjust the margin as needed */
+        }
+
+        .button-container {
+            display: flex;
+            gap: 10px;
+            /* Adjust the gap as needed */
+        }
+
+        .label {
+            width: 21rem !important;
+
+        }
+
+        .md-6 {
+            display: flex;
+
+        }
+
+        .row {
+            display: flex !important;
+            margin-left: 0px !important;
+            margin-right: 0px !important;
+            align-items: center !important;
+
+        }
+
+        .form-control {
+            width: auto !important;
+            display: inline;
+        }
+
+        /* #myForm2{
+        display: flex !important;
+    } */
+    </style>
+
 
 </head>
 
@@ -203,7 +401,7 @@
                             <hr class="dropdown-divider">
                         </li>
                         <li>
-                            <a class="dropdown-item" href="#">
+                            <a class="dropdown-item" href="{{ route('logout') }}">
                                 <div class="d-flex align-items-center">
                                     <div class="">
                                         <i class="bi bi-lock-fill"></i>
@@ -242,7 +440,7 @@
             <!--navigation-->
             <ul class="metismenu" id="menu">
                 <li>
-                <a class="dropdown-item" href="{{route('admin.dashboard')}}">
+                    <a class="dropdown-item" href="{{route('admin.dashboard')}}">
                         <div class="parent-icon">
                             <i class="bi bi-house-fill"></i>
                         </div>
@@ -257,7 +455,7 @@
                         <div class="menu-title">Conferences</div>
                     </a>
                     <ul>
-                      
+
                         <li>
                             <a href="{{route('admin.show.upload')}}">
                                 <i class="bi bi-circle"></i>
@@ -303,7 +501,7 @@
                         <li>
                             <a href="{{route('admin.show.neutral')}}">
                                 <i class="bi bi-circle"></i>
-                                    Neutral
+                                Neutral
                             </a>
                         </li>
 
@@ -311,7 +509,7 @@
                         <li>
                             <a href="{{route('admin.show.unsubscribe')}}">
                                 <i class="bi bi-circle"></i>
-                                    Un Subscribe
+                                Un Subscribe
                             </a>
                         </li>
 
@@ -319,7 +517,7 @@
                         <li>
                             <a href="{{route('admin.show.online')}}">
                                 <i class="bi bi-circle"></i>
-                                    Online Presentation
+                                Online Presentation
                             </a>
                         </li>
 
@@ -366,30 +564,30 @@
                         </li>
                     </ul>
                 </li>
-                <li>
+                <!-- <li>
                     <a href="timesheet.html">
                         <div class="parent-icon">
                             <i class="bi bi-alarm-fill"></i>
                         </div>
                         <div class="menu-title">Timesheet</div>
                     </a>
-                </li>
+                </li> -->
                 <li>
-                <a href="{{route('admin.show.report')}}">
+                    <a href="{{route('admin.show.report')}}">
                         <div class="parent-icon">
                             <i class="bi bi-bar-chart-line-fill"></i>
                         </div>
                         <div class="menu-title">Reports</div>
                     </a>
                 </li>
-                <li>
+                <!-- <li>
                     <a href="contact.html" target="_blank">
                         <div class="parent-icon">
                             <i class="bi bi-telephone-fill"></i>
                         </div>
                         <div class="menu-title">Contact Us</div>
                     </a>
-                </li>
+                </li> -->
             </ul>
             <!--end navigation-->
         </aside>
@@ -397,6 +595,190 @@
         <!--start content-->
 
         @yield('content')
+
+
+
+
+
+
+        <div class="conatiner">
+            <div id="ViewCommentsModal" class="modal">
+
+                <!-- Modal content -->
+                <div class="modal-content">
+                    <!-- <form id="myForm2" class="hidden"> -->
+                    <div class="row">
+                        <form>
+                            @csrf
+                            <div id="myForm2" class="hidden">
+                                <div class="md-6 align-items-center d-inline-flex">
+
+
+                                    <input type="text" id="articleInput" hidden>
+                                    <input type="text" id="conferenceInput" hidden>
+                                    <input type="text" id="emailInput" hidden>
+
+                                    <input type="text" id="nameInput" hidden>
+
+
+                                    <label class="label">Select Client Status</label>
+                                    <select class="form-select w-100" id="client_status_id">
+
+                                        <option value="">--Choose--</option>
+
+                                        <option value="1">Positive</option>
+                                        <option value="2">Negative</option>
+
+                                    </select>
+                                </div>
+                                <div class="d-inline">
+                                    <span class="col-md-6">
+                                        <label>Write comment</label>
+                                        <input class="form-control" type="text" id="comment">
+                                    </span>
+                                </div>
+
+                            </div>
+                        </form>
+                        <div class="d-inline">
+                            <button class="add-button btn btn-primary btn-sm" id="showFormBtn2">Add</button>
+                        </div>
+                        <span class="close" onclick="closeViewModal()">&times;</span>
+
+                    </div>
+
+
+
+
+
+
+                    <div id="commentsContainer">
+                        <!-- Comments will be dynamically inserted here -->
+                    </div>
+                </div>
+            </div>
+
+            <div id="ViewFollowModal" class="modal">
+
+                <!-- Modal content -->
+                <div class="modal-content">
+                    <!-- <form id="myForm2" class="hidden"> -->
+                    <div class="row">
+                        <form>
+                            @csrf
+                            <div id="followupForm" class="hidden">
+                                <div class="align-items-center d-inline-flex">
+
+
+                                <input type="text" id="articleInput2" hidden>
+                                    <input type="text" id="conferenceInput2" hidden>
+                                    <input type="text" id="emailInput2" hidden>
+                                    <input type="text" id="nameInput2" hidden>
+
+
+
+                                    <label class="label">Follow up Date</label>
+                                    <input type="date" class="form-control" id="followup_date" name="followup_date">
+
+                                    <label>Followup Type</label>
+                                        <select class="form-select w-50" name="followup_type" id="followup_type">
+                                            <option value="">--choose one--</option>
+                                            <option value="payment">Payment</option>
+                                            <option value="document">Document</option>
+                                            <option value="reference">reference</option>
+                                            <option value="confirmation">Confirmation</option>
+
+                                        </select>
+
+
+                                        <label>Notes</label>
+                                        <textarea id="note" name="note"></textarea>
+                                      
+                                </div>
+                                
+
+                            </div>
+                        </form>
+                        <div class="d-inline">
+
+                            <button class="add-button btn btn-primary btn-sm" id="formsubmitBtn">Add</button>
+                        </div>
+                        <span class="close" onclick="closeFollowViewModal()">&times;</span>
+                    </div>
+
+
+
+
+
+
+                    <div id="FollowupcommentsContainer">
+                        <!-- Comments will be dynamically inserted here -->
+                    </div>
+                </div>
+            </div>
+
+
+            <div id="ViewFollowNegativeModal" class="modal">
+
+<!-- Modal content -->
+<div class="modal-content">
+    <!-- <form id="myForm2" class="hidden"> -->
+    <div class="row">
+        <form>
+            @csrf
+            <div id="NegativefollowupForm" class="hidden">
+                <div class="align-items-center d-inline-flex">
+
+
+                <input type="text" id="articleInput2" hidden>
+                    <input type="text" id="conferenceInput2" hidden>
+                    <input type="text" id="emailInput2" hidden>
+                    <input type="text" id="nameInput2" hidden>
+
+
+
+                    <label class="label">Follow up Date</label>
+                    <input type="date" class="form-control" id="negative_followup_date" name="negative_followup_date">
+
+                    <label>Followup Type</label>
+                        <select class="form-select w-50" name="negative_followup_type" id="negative_followup_type">
+                            <option value="">--choose one--</option>
+                            <option value="payment">Payment</option>
+                            <option value="document">Document</option>
+                            <option value="reference">reference</option>
+                            <option value="confirmation">Confirmation</option>
+
+                        </select>
+
+
+                        <label>Notes</label>
+                        <textarea  id="negative_note" name="negative_note"></textarea>
+                      
+                </div>
+                
+
+            </div>
+        </form>
+        <div class="d-inline">
+
+            <button class="add-button btn btn-primary btn-sm" id="formNegativesubmitBtn">Add</button>
+        </div>
+        <span class="close" onclick="closeFollowViewModal()">&times;</span>
+    </div>
+
+
+
+
+
+
+    <div id="FollowupNegativecommentsContainer">
+                        <!-- Comments will be dynamically inserted here -->
+                    </div>
+</div>
+</div>
+
+
+        </div>
 
 
 
@@ -452,6 +834,357 @@
 
         });
     </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Add an event listener to the button
+            document.getElementById("showFormBtn2").addEventListener("click", function() {
+
+                // Get the form element
+                var form2 = document.getElementById("myForm2");
+
+                // Toggle the "hidden" class to show/hide the form
+                form2.classList.toggle("hidden");
+
+                // Change the button text from "Add" to "Save"
+                var buttonText = this.innerText;
+                this.innerText = buttonText === "Add" ? "Save" : "Add";
+            });
+        });
+
+        function saveForm() {
+            var formData = $('#myForm2').serialize(); // Serialize form data
+            const article_id = $('#articleInput').val();
+            const email_id = $('#emailInput').val();
+            const conference_id = $('#conferenceInput').val();
+            const client_status_id = $('#client_status_id').val();
+
+
+
+
+
+            const comment = $('#comment').val();
+
+
+
+
+
+            $.ajax({
+                type: 'POST',
+                url: '{{route('admin.add.comments')}}',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: {
+                    article: article_id,
+                    email: email_id,
+                    client_status_id: client_status_id,
+                    comment: comment,
+                    conference: conference_id,
+
+                },
+                success: function(response) {
+                    // Handle success, if needed
+                    console.log(response);
+                    toastr.success(response.message);
+
+                    $('#client_status_id').val('');
+                    $('#comment').val('');
+
+                    console.log(response.comments);
+
+
+                    updateModalContent2(response.comments);
+
+
+                    // If submission is successful, hide the form and change button text back to "Add"
+                    $('#myForm2').addClass('hidden');
+                    $('#showFormBtn2').text('Add');
+                },
+                error: function(xhr, status, error) {
+
+                    var errors = xhr.responseJSON.errors;
+                    handleValidationErrors(errors);
+                },
+            });
+        }
+
+        function handleValidationErrors(errors) {
+            // Display validation errors as toasts
+            for (var field in errors) {
+                if (errors.hasOwnProperty(field)) {
+                    toastr.error(errors[field][0]);
+                }
+            }
+        }
+
+
+        // Add an event listener to the "Save" button
+        document.getElementById("showFormBtn2").addEventListener("click", function() {
+            // Check if the button text is "Save" and submit the form if it is
+            if (this.innerText === "Save") {
+                saveForm();
+            }
+        });
+    </script>
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Add an event listener to the button
+            document.getElementById("formsubmitBtn").addEventListener("click", function() {
+
+                // Get the form element
+
+
+                var followupForm = document.getElementById("followupForm");
+
+                // Toggle the "hidden" class to show/hide the form
+                followupForm.classList.toggle("hidden");
+
+                // Change the button text from "Add" to "Save"
+                var mybutton = this.innerText;
+                this.innerText = mybutton === "Add" ? "Save" : "Add";
+            });
+        });
+
+
+
+
+        function updateModalFollowupContent2(followups) {
+            // Get the comments container
+            var commentsContainer = document.getElementById('FollowupcommentsContainer');
+
+            // Clear existing content
+            commentsContainer.innerHTML = '';
+
+            // Iterate through comments and append them to the container
+            followups.forEach(followup => {
+                // Create a card element for each comment
+                var cardDiv = document.createElement('div');
+                cardDiv.classList.add('comment-card'); // Add a CSS class for styling if needed
+
+                cardDiv.innerHTML = `
+        <p><b>Follow Up Date:</b> <span style="margin-right:50px" id="clientStatus${comment.id}">${followup.followup_date}</span>
+    
+        <span style="margin-right:50px"> <b> Follow Up Type:</b> ${followup.followup_type} </span>
+       <span style="margin-right:50px"> <b>Followup Email:</b> ${followup.email} </span>
+        </p>
+          <b> Note: </b> ${followup.note}
+        </p>
+
+        `;
+
+
+
+
+                // Append the card to the container
+                commentsContainer.appendChild(cardDiv);
+            });
+        }
+
+
+        function saveForm2() {
+            var formData = $('#followupForm').serialize(); // Serialize form data
+            const article_id = $('#articleInput2').val();
+
+
+            const email_id = $('#emailInput2').val();
+            const conference_id = $('#conferenceInput2').val();
+            const client_status_id = $('#client_status_id2').val();
+            const comment = $('#comment').val();
+            const followup_date = $('#followup_date').val();
+            const followup_type = $('#followup_type').val();
+            const note = $('#note').val();
+            const name = $('#nameInput2').val();
+
+
+
+
+
+
+            $.ajax({
+                type: 'POST',
+                url: '{{route('admin.add.followupdata')}}',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: {
+                    article: article_id,
+                    email: email_id,
+                    conference: conference_id,
+                    followup_date: followup_date,
+                    followup_type: followup_type,
+                    note: note,
+                    name: name
+
+                },
+                success: function(response) {
+                    // Handle success, if needed
+                    console.log(response);
+                    toastr.success(response.message);
+
+                    $('#client_status_id').val('');
+                    $('#comment').val('');
+                    $('#emailInput2').val();
+                    $('#conferenceInput2').val();
+                    $('#client_status_id2').val();
+                    $('#comment').val();
+                    $('#followup_date').val();
+                    $('#followup_type').val();
+                    $('#note').val();
+
+                    console.log(response.followups);
+
+
+                    updateModalFollowupContent2(response.followups);
+
+
+                    // If submission is successful, hide the form and change button text back to "Add"
+                    $('#followupForm').addClass('hidden');
+                    $('#formsubmitBtn').text('Add');
+                },
+                error: function(xhr, status, error) {
+
+                    var errors = xhr.responseJSON.errors;
+                    handleValidationErrors(errors);
+                },
+            });
+        }
+
+        function handleValidationErrors(errors) {
+            // Display validation errors as toasts
+            for (var field in errors) {
+                if (errors.hasOwnProperty(field)) {
+                    toastr.error(errors[field][0]);
+                }
+            }
+        }
+
+
+        // Add an event listener to the "Save" button
+        document.getElementById("formsubmitBtn").addEventListener("click", function() {
+            // Check if the button text is "Save" and submit the form if it is
+            if (this.innerText === "Save") {
+                saveForm2();
+            }
+        });
+    </script>
+
+
+
+
+
+
+    <script>
+        function openViewModal() {
+            var viewmodal = document.getElementById('ViewCommentsModal');
+            viewmodal.style.display = 'block';
+        }
+
+        function closeViewModal() {
+            var viewmodal = document.getElementById('ViewCommentsModal');
+            viewmodal.style.display = 'none';
+        }
+
+
+        // Function to update modal content with comments
+        function updateModalContent2(comments) {
+            // Get the comments container
+            var commentsContainer = document.getElementById('commentsContainer');
+
+            // Clear existing content
+            commentsContainer.innerHTML = '';
+
+            // Iterate through comments and append them to the container
+            comments.forEach(comment => {
+                // Create a card element for each comment
+                var cardDiv = document.createElement('div');
+                cardDiv.classList.add('comment-card'); // Add a CSS class for styling if needed
+
+                cardDiv.innerHTML = `
+        <p><b>Client Status:</b> <span style="margin-right:50px" id="clientStatus${comment.id}">${comment.name}</span>
+    
+        <span style="margin-right:50px"> <b> Email:</b> ${comment.email} </span>
+       <span style="margin-right:50px"> <b> Date:</b> ${comment.comment_created_date} </span>
+        </p>
+          <b> Comment: </b> ${comment.comment}
+        </p>
+
+        `;
+
+                var clientStatusSpan = cardDiv.querySelector(`#clientStatus${comment.id}`);
+                if (comment.name === 'Positive') {
+                    clientStatusSpan.style.color = 'green';
+                    // Add more styles as needed
+                } else if (comment.name === 'Negative') {
+                    clientStatusSpan.style.color = 'red';
+                    // Add more styles as needed
+                }
+
+
+                // Append the card to the container
+                commentsContainer.appendChild(cardDiv);
+            });
+        }
+
+
+
+        function makeAjaxCall(conference, article, email) {
+            const url = `comments?conference=${conference}&article=${article}&email=${email}`;
+
+            // Make an AJAX request to fetch comments
+            fetch(url) // Update the URL to your actual API endpoint
+                .then(response => response.json())
+                .then(data => {
+
+                    console.log(data.comments[0].article);
+                    document.getElementById('articleInput').value = data.comments[0].article;
+                    document.getElementById('conferenceInput').value = data.comments[0].conference;
+                    document.getElementById('emailInput').value = data.comments[0].email;
+
+                    // Update the modal content with comments
+                    updateModalContent2(data.comments);
+                })
+                .catch(error => console.error('Error fetching comments:', error));
+
+            // Display the modal
+            document.getElementById('ViewCommentsModal').style.display = 'block';
+        }
+
+        function makeAjaxCall2(conference, article, email) {
+            // Assuming you are using the XMLHttpRequest object for AJAX
+            var xhr = new XMLHttpRequest();
+
+            console.log(conference, article, email);
+
+
+            const url = `comments?conference=${conference}&article=${article}&email=${email}`;
+
+            // Configure the AJAX request
+            xhr.open('GET', url, true);
+
+            // Set up a callback function to handle the response
+            xhr.onload = function(response) {
+
+                console.log(response);
+                if (xhr.status == 200) {
+                    // If the AJAX request is successful, call openModal()
+                    openViewModal();
+                } else {
+                    // Handle errors if the AJAX request fails
+                    console.error('AJAX request failed');
+                }
+            };
+
+            // Send the AJAX request
+            xhr.send();
+        }
+
+        // Call the makeAjaxCall() function to initiate the AJAX request
+    </script>
+
+
 </body>
 
 </html>

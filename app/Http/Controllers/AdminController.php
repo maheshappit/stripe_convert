@@ -642,12 +642,13 @@ class AdminController extends Controller
 
 
         $user = Conference::find($request->id);
+        $all_conferences=ConferencesData::all();
 
         $clientStatuses = ClientStatus::pluck('name', 'id')->all();
 
 
 
-        return view('admin.user.edit', compact('user', 'clientStatuses'));
+        return view('admin.edit', compact('user', 'clientStatuses','all_conferences'));
     }
 
 
