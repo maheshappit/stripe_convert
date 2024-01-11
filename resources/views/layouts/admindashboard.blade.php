@@ -608,6 +608,42 @@
                         <div class="menu-title">Timesheet</div>
                     </a>
                 </li> -->
+
+
+                        <li>
+                            <a href="javascript:;" class="has-arrow">
+                                <div class="parent-icon">
+                                    <i class="bi bi-alarm-fill"></i>
+                                </div>
+                                <div class="menu-title">Timesheet</div>
+                            </a>
+                            <ul>
+                                <li>
+                                    <a href="all-user.html">
+                                        <i class="bi bi-circle"></i>
+                                        All User
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="weekly-report.html">
+                                        <i class="bi bi-circle"></i>
+                                        Weekly Report
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="leave-wfh-lop.html">
+                                        <i class="bi bi-circle"></i>
+                                        Leave, WFH and LOP Reports
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="add-new-leave.html">
+                                        <i class="bi bi-circle"></i>
+                                        Add New Leave
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
                 <li>
                     <a href="{{route('admin.show.report')}}">
                         <div class="parent-icon">

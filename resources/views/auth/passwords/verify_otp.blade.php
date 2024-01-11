@@ -31,6 +31,7 @@
         {{ csrf_field() }}
         <div class="formpanel">
             <div class="formrow{{ $errors->has('otp') ? ' has-error' : '' }}">
+              
                 <input id="otp" type="text" class="form-control" name="otp" value="" autofocus placeholder="{{__('OTP')}}">
                 @if ($errors->has('otp'))
                     <span class="help-block mt-4">

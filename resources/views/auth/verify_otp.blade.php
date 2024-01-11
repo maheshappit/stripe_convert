@@ -31,7 +31,7 @@
         .otp-input {
             font-size: 20px;
             padding: 10px;
-            width: 40px;
+            width: 250px;
             text-align: center;
             margin: 0 5px;
         }
@@ -135,15 +135,16 @@
                 <h2>Enter 6-digit OTP</h2>
 
 
-                <input type="hidden" name="otp" value="" id="completeOtp" />
+<input type="text" name="otp" class="otp-input" maxlength="6" required="">
+                <!-- <input type="hidden" name="otp" value="" id="completeOtp" /> -->
 
-
+<!-- 
                 <input type="text" class="otp-input" maxlength="1" oninput="moveToNextInput(this)" onkeydown="moveToPreviousInput(this, event)" required="">
 <input type="text" class="otp-input" maxlength="1" oninput="moveToNextInput(this)" onkeydown="moveToPreviousInput(this, event)" required="">
 <input type="text" class="otp-input" maxlength="1" oninput="moveToNextInput(this)" onkeydown="moveToPreviousInput(this, event)" required="">
 <input type="text" class="otp-input" maxlength="1" oninput="moveToNextInput(this)" onkeydown="moveToPreviousInput(this, event)" required="">
 <input type="text" class="otp-input" maxlength="1" oninput="moveToNextInput(this)" onkeydown="moveToPreviousInput(this, event)" required="">
-<input type="text" class="otp-input" maxlength="1" oninput="moveToNextInput(this); updateCompleteOtp();" onkeydown="moveToPreviousInput(this, event)" required="">
+<input type="text" class="otp-input" maxlength="1" oninput="moveToNextInput(this); updateCompleteOtp();" onkeydown="moveToPreviousInput(this, event)" required=""> -->
                 <br>
                 <button type="button" class="clear-btn" onclick="clearOTP()">Clear</button>
             </div>
