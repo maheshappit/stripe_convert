@@ -48,12 +48,14 @@
     <script src="public/assets/plugins/bootstrap-material-datetimepicker/js/moment.min.js"></script>
 
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js" defer></script>
-
-
-
-
-    
     <title>Stripe Conferences</title>
+    <style>
+        .dt-buttons {
+        background-color: green;
+        color: white;
+        /* Set text color to ensure visibility */
+    }
+    </style>
 </head>
 
 
@@ -520,7 +522,7 @@
                 </form>
             </div> -->
             <div class="table-responsive mt-3">
-            <table id="dataTable" class="table table-striped">
+            <table id="dataTable" class="table table-striped table-hover">
         <!-- Table headers go here -->
         <thead>
             <tr>

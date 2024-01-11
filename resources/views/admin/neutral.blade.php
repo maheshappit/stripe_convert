@@ -32,6 +32,13 @@
     <link href="assets/css/semi-dark.css" rel="stylesheet">
     <link href="assets/css/header-colors.css" rel="stylesheet">
     <title>Stripe Conferences</title>
+    <style>
+        .dt-buttons {
+        background-color: green;
+        color: white;
+        /* Set text color to ensure visibility */
+    }
+    </style>
 </head>
 
 
@@ -808,7 +815,7 @@
 
                 <input type="checkbox" id="toggleCheckbox" class="select-all" disabled> Select All
                 <button id="hiddenButton" class="btn btn-success" style="display: none;">Sent Email</button>
-                <table id="PositivedtHorizontalExample">
+                <table id="PositivedtHorizontalExample" class="table table-striped table-hover">
 
                     <!-- <table id="PositivedtHorizontalExample" class="table table-striped table-bordered border-primary" style="width:100%">
                     <thead class="table-primary">
