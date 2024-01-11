@@ -451,6 +451,9 @@ class HomeController extends Controller
 
         $positivequery = Conference::query();
 
+        $today = Carbon::today();
+        $formattedDate = $today->format('Y-m-d');
+
         $today_positve_count = $positivequery->join('comments', function ($join) {
             $join->on('comments.conference', '=', 'conferences.conference')
                 ->on('comments.email', '=', 'conferences.email')
@@ -462,7 +465,7 @@ class HomeController extends Controller
             ->unique(function ($item) {
                 return $item->email . $item->article . $item->conference;
             })
-            ->sortByDesc('created_at')->where('client_status_id', $status);
+            ->sortByDesc('created_at')->where('client_status_id', $status)->where('comment_created_date',$formattedDate);
 
         $positivequery = $PositiveuniqueConferences;
 
@@ -555,6 +558,7 @@ class HomeController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'client_status_id'=>'required',
+            'comment'=>'required',
         ]);
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
@@ -612,12 +616,6 @@ class HomeController extends Controller
             }
 
             }
-
-
-
-
-
-
 
 
             return response()->json([

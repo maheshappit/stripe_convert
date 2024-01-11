@@ -34,7 +34,6 @@ Route::middleware(['checkUserRole'])->group(function () {
     
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
     Route::any('upload',[CsvController::class,'upload'])->name('upload');
-
     Route::get('user/edit', [App\Http\Controllers\HomeController::class, 'edit'])->name('user.edit');
     Route::get('/conferences',[ConferenceController::class,'index'])->name('show.conferences');
     Route::post('conferenceDetails/upload',[ConferenceController::class,'store'])->name('conferencedetails.save');
@@ -52,7 +51,6 @@ Route::middleware(['checkUserRole'])->group(function () {
     Route::get('comments', [App\Http\Controllers\HomeController::class,'getComments'])->name('user.get.comments');
     Route::get('add-new-comments', [App\Http\Controllers\HomeController::class,'addNewComments'])->name('user.add.comments');
     Route::post('update/conferencedata', [App\Http\Controllers\HomeController::class,'updateData'])->name('user.update.conferencedata');
-
     Route::get('todaydata/index', [App\Http\Controllers\HomeController::class,'todayData'])->name('user.all.todaydata');
     Route::get('show-recent-data', [App\Http\Controllers\HomeController::class,'ShowtodayData'])->name('user.show.recentdata');
 
@@ -60,12 +58,7 @@ Route::middleware(['checkUserRole'])->group(function () {
     //conference routes
 
     Route::get('user/add-conference', [UserConferenceController::class, 'add'])->name('user.add.conference');
-
     Route::get('user/show-conferences', [UserConferenceController::class, 'index'])->name('user.showall.conferences');
-
-
-
-
     Route::any('user/show-upload-form',[UserConferenceController::class,'showUpload'])->name('user.show.upload');
 
     
@@ -90,7 +83,14 @@ Route::group(['middleware'=>'admin'],function(){
     Route::any('admin/all-articles/{id}', [AdminController::class,'allTopics'])->name('admin.all.articles');
     Route::post('admin/user/create', [AdminController::class,'createUser'])->name('admin.user.create');
 
-    Route::get('edit', [AdminController::class, 'Useredit'])->name('admin.user.edit');
+    Route::any('admin/showuser', [AdminController::class,'showUser'])->name('admin.user.show');
+
+
+    Route::any('admin/get-allusers', [AdminController::class,'getAllUsers'])->name('admin.get.allusers');
+
+
+
+    Route::get('admin/edit', [AdminController::class, 'Useredit'])->name('admin.user.edit');
     Route::any('admin/client/update', [AdminController::class, 'ClientUpdate'])->name('admin.client.update');
     Route::get('admin/comments', [AdminController::class,'getComments'])->name('admin.get.comments');
     Route::any('add-new-comments', [AdminController::class,'addNewComments'])->name('admin.add.comments');
@@ -98,20 +98,15 @@ Route::group(['middleware'=>'admin'],function(){
 
     Route::get('admin/positive', [AdminController::class,'getPositiveShow'])->name('admin.show.positive');
     Route::get('admin/positive/show', [AdminController::class,'ShowPositiveData'])->name('admin.positive.data');
-
-
     Route::get('admin/negative', [AdminController::class,'ShowNegative'])->name('admin.show.negative');
     Route::get('admin/negative/show', [AdminController::class,'getNegativeData'])->name('admin.negative.data');
-
     Route::get('admin/followup', [AdminController::class,'ShowFollowup'])->name('admin.show.followup');
     Route::get('admin/followup/show', [AdminController::class,'getFollowupData'])->name('admin.followup.data');
-
     Route::any('admin/all-conferences/{id}', [AdminController::class,'allClients'])->name('admin.all.conferences');
     Route::get('admin/neutral', [AdminController::class,'getNeutralShow'])->name('admin.show.neutral');
 
     Route::get('admin/unsubscribe', [AdminController::class,'ShowUnsubscribeData'])->name('admin.show.unsubscribe');
     Route::get('admin/unsubscribe/data', [AdminController::class,'getUnsubscribeData'])->name('admin.unsubscribe.data');
-
 
     Route::get('admin/online', [AdminController::class,'getOnlineShow'])->name('admin.show.online');
     Route::get('admin/online-data', [AdminController::class,'getOnlineData'])->name('admin.online.data');
@@ -129,6 +124,18 @@ Route::group(['middleware'=>'admin'],function(){
     Route::get('admin/show-recent-data', [AdminController::class,'ShowtodayData'])->name('admin.show.recentdata');
     Route::post('admin/update/conferencedata', [AdminController::class,'updateData'])->name('admin.update.conferencedata');
 
+    
+
+    Route::get('admin/normaluseredit', [AdminController::class,'NormalUserEdit'])->name('admin.normaluser.edit');
+    Route::post('admin/normaluser/update', [AdminController::class, 'userUpdate'])->name('admin.normaluser.update');
+
+
+    Route::any('admin/normaluserdelete', [AdminController::class,'NormalUserDelete'])->name('admin.normaluser.delete');
+
+
+    Route::any('admin/get/user', [AdminController::class,'UserGetIDData'])->name('user.get.iddata');
+
+    
     
 
 });

@@ -456,6 +456,8 @@
                     </a>
                     <ul>
 
+
+                    
                         <li>
                             <a href="{{route('admin.show.upload')}}">
                                 <i class="bi bi-circle"></i>
@@ -463,12 +465,46 @@
                             </a>
                         </li>
 
+                       
+
+
                         <li>
                             <a href="{{route('admin.show.conferences')}}">
                                 <i class="bi bi-circle"></i>
                                 Conference List
                             </a>
                         </li>
+                    </ul>
+                </li>
+
+                <li>
+                    <a href="javascript:;" class="has-arrow">
+                        <div class="parent-icon">
+                            <i class="bi bi-person-lines-fill"></i>
+                        </div>
+                        <div class="menu-title">Users</div>
+                    </a>
+                    <ul>
+
+                         <li>
+                            <a href="{{route('admin.user.show')}}">
+                                <i class="bi bi-circle"></i>
+                                Add Users
+                            </a>
+                        </li>
+
+
+                        <li>
+                            <a href="{{route('admin.show.allusers')}}">
+                                <i class="bi bi-circle"></i>
+                                show Users
+                            </a>
+                        </li>
+                      
+                      
+
+
+                        
                     </ul>
                 </li>
                 <li>
@@ -781,6 +817,12 @@
         </div>
 
 
+
+        
+        
+
+
+        
 
 
         <a href="javaScript:;" class="back-to-top">

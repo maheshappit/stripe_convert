@@ -18,7 +18,7 @@
 
                 $.ajax({
                     type: 'POST',
-                    url: '{{ route('admin.client.update', ['id' => '']) }}' + updateId,
+                    url: '{{ route('admin.normaluser.update', ['id' => '']) }}' + updateId,
 
                     data: formData,
                     success: function(response) {
@@ -28,7 +28,7 @@
                         if (response.status_code == '200') {
                             toastr.success(response.message);
                             setTimeout(function() {
-                                 window.location.href = '{{ route('admin.show.conferences') }}'; 
+                                 window.location.href = '{{ route('admin.show.allusers') }}'; 
                          }, 2000);  
 
 
@@ -86,7 +86,7 @@
 <main class="page-content">
     <!--breadcrumb-->
     <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-        <div class="breadcrumb-title pe-3">Conferences</div>
+        <div class="breadcrumb-title pe-3">Users</div>
         <div class="ps-3">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb mb-0 p-0">
@@ -95,7 +95,7 @@
                             <i class="bi bi-grid-fill"></i>
                         </a>
                     </li>
-                    <li class="breadcrumb-item active" aria-current="page">Add New Conference</li>
+                    <li class="breadcrumb-item active" aria-current="page">Update User</li>
                 </ol>
             </nav>
         </div>
@@ -120,7 +120,7 @@
         <div class="col-lg-8 mx-auto">
             <div class="card">
                 <div class="card-header py-3 bg-transparent">
-                    <h5 class="mb-0">Update New Conferences</h5>
+                    <h5 class="mb-0">Update User</h5>
                 </div>
                 <div class="card-body">
                     <div class="border p-3 rounded">
@@ -131,88 +131,29 @@
 
                         <input type="text"  hidden value="{{$user->id}}" id="userid"  >
 
-                            <div class="col-12">
-                                <label class="form-label">Conferences</label>
-
-
-                                <input type="text" class="form-control" name="conference" placeholder="Enter Conference" readonly value="{{$user->conference ?? ' '}}">
-
-
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label">Article:</label>
-                                <input type="text" class="form-control" name="article" readonly placeholder="Enter Article" value="{{$user->article ?? ' '}}">
-                            </div>
+                          
+                           
                             <div class="col-12">
                                 <label class="form-label">Client Name:</label>
-                                <input type="text" class="form-control" value="{{$user->name ?? ''}}" readonly name="name" placeholder="Enter Client Name">
+                                <input type="text" class="form-control" value="{{$user->name ?? ''}}"  name="name" placeholder="Enter Client Name">
                             </div>
                             <div class="col-12">
                                 <label class="form-label">Email:</label>
-                                <input type="email" class="form-control" readonly value="{{$user->email ?? ''}}" name="email" placeholder="Enter Email">
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label">Country</label>
-                                <input type="text" name="country" class="form-control" value="{{$user->country ?? ''}}" placeholder="Enter Country">
+                                <input type="email" class="form-control"  value="{{$user->email ?? ''}}" name="email" placeholder="Enter Email">
                             </div>
 
-
-                            <div class="col-12">
-                                <label class="form-label">Client Status</label>
-                                <select class="form-select" name="client_status_id" id="client_status_select">
-
-                                    <option value="">--Choose--</option>
-                                    @foreach ($clientStatuses as $id => $name)
-                                    <option value="{{ $id }}">{{ $name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
+                            <input type="text" name="role" hidden  value="{{$user->role}}">
+                            
+                            <!-- <div class="col-12">
+                                <label class="form-label">Role:</label>
+                                <select class="form-select w-50" id="role" name="role" value="{{$user->role}}">
+                                    <option value="">--select--</option>
+                                    <option value="user"{{ $user->role == 'user' ? ' selected' : '' }}>User</option>
+                                    <option value="admin"{{ $user->role == 'admin' ? ' selected' : '' }}>Admin</option>
 
 
-                            <div id="followup_fields" style="display: none;">
-                                <!-- Add your additional input fields here -->
-                                <div class="row justify-content-center">
-                                    <div class="col-md-4">
-                                        <input type="text" id="articleInput2" hidden="">
-                                        <input type="text" id="conferenceInput2" hidden="">
-                                        <input type="text" id="emailInput2" hidden="">
-
-                                        <label class="label">Follow up Date</label>
-                                        <input type="date" class="form-control" id="followup_date" name="followup_date">
-                                    </div>
-
-                                    <div class="col-md-4">
-                                        <label>Followup Type</label>
-                                        <select class="form-control" name="followup_type" id="followup_type">
-                                            <option value="">--choose one--</option>
-                                            <option value="payment">Payment</option>
-                                            <option value="document">Document</option>
-                                            <option value="reference">Reference</option>
-                                            <option value="confirmation">Confirmation</option>
-                                        </select>
-                                    </div>
-
-                                    <div class="col-md-4">
-                                        
-
-                                        <label class="label">Note</label>
-                                        <textarea id="note" name="note"></textarea>
-                                    </div>
-                                </div>
-                                <!-- Example: -->
-                            </div>
-
-
-                            <div class="col-12">
-                                <label class="form-label">FeebBack</label>
-                                <textarea name="comment" class="col-md-12" >{{$user->comment}}</textarea>
-                            </div>
-
-                         
-
-
-
-
+                                 </select>
+                            </div> -->
 
 
                             <div class="col-12">

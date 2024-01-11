@@ -86,7 +86,7 @@
 <main class="page-content">
     <!--breadcrumb-->
     <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-        <div class="breadcrumb-title pe-3">Conferences</div>
+        <div class="breadcrumb-title pe-3">Users</div>
         <div class="ps-3">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb mb-0 p-0">
@@ -95,7 +95,7 @@
                             <i class="bi bi-grid-fill"></i>
                         </a>
                     </li>
-                    <li class="breadcrumb-item active" aria-current="page">Add New Conference</li>
+                    <li class="breadcrumb-item active" aria-current="page">Update User</li>
                 </ol>
             </nav>
         </div>
@@ -120,7 +120,7 @@
         <div class="col-lg-8 mx-auto">
             <div class="card">
                 <div class="card-header py-3 bg-transparent">
-                    <h5 class="mb-0">Update New Conferences</h5>
+                    <h5 class="mb-0">Update User</h5>
                 </div>
                 <div class="card-body">
                     <div class="border p-3 rounded">

@@ -49,6 +49,58 @@ class AdminController extends Controller
         return view('admin.login-form');
     }
 
+
+    public function getAllUsers(){
+
+                $query = User::query();
+
+                return Datatables::of($query)
+            ->make(true);
+
+
+    }
+
+    public function UserGetIDData(Request $request){
+
+        $user = User::find($request->id);
+
+        if (!$user) {
+            return response()->json(['error' => 'User not found'], 404);
+        }
+    
+        return response()->json(['user' => $user], 200);
+        
+
+    }
+
+    public function NormalUserDelete(Request $request){
+
+       
+        $user = User::findOrFail($request->id);
+        $user->delete();
+        
+        return response()->json([
+            'status_code' => '200',
+            'message' => 'Client Deleted Successfully',
+        ]);
+
+
+
+        
+    }
+
+
+
+
+    public function showUser(){
+
+        $all_conferences = ConferencesData::all();
+
+
+        return view('admin.adduser',compact('all_conferences'));
+
+    }
+
     public function getComments(Request $request)
     {
 
@@ -640,16 +692,22 @@ class AdminController extends Controller
     public function Useredit(Request $request)
     {
 
-
         $user = Conference::find($request->id);
         $all_conferences=ConferencesData::all();
-
         $clientStatuses = ClientStatus::pluck('name', 'id')->all();
-
-
 
         return view('admin.edit', compact('user', 'clientStatuses','all_conferences'));
     }
+
+    public function NormalUserEdit(Request $request)
+    {
+
+        $user = User::find($request->id);
+
+        return view('admin.normaluseredit', compact('user'));
+    }
+
+    
 
 
     public function AllUsers()
@@ -662,7 +720,16 @@ class AdminController extends Controller
     public function userUpdate(Request $request)
     {
 
-        $user = User::findOrFail($request->id);
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'email'=>'required',
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }else{
+
+            $user = User::findOrFail($request->id);
         $user->name = $request->name;
         $user->email = $request->email;
         $user->role = $request->role;
@@ -673,6 +740,10 @@ class AdminController extends Controller
             'status_code' => '200'
 
         ], 200);
+
+        }
+
+        
     }
 
 
@@ -1554,8 +1625,10 @@ class AdminController extends Controller
                 ]);
             }
 
-            return response()->json(['message' => 'User  Created successfully']);
-        }
+            return response()->json([
+                'status_code' => '200',
+                'message' => 'User Created Successfully',
+            ]);        }
     }
 
 
@@ -1563,6 +1636,10 @@ class AdminController extends Controller
     public function getStatusCount($status=null){
 
         $positivequery = Conference::query();
+
+        
+        $today = Carbon::today();
+        $formattedDate = $today->format('Y-m-d');
 
         $today_positve_count = $positivequery->join('comments', function ($join) {
             $join->on('comments.conference', '=', 'conferences.conference')
@@ -1575,7 +1652,7 @@ class AdminController extends Controller
             ->unique(function ($item) {
                 return $item->email . $item->article . $item->conference;
             })
-            ->sortByDesc('created_at')->where('client_status_id', $status);
+            ->sortByDesc('created_at')->where('client_status_id', $status)->where('comment_created_date',$formattedDate);
 
         $positivequery = $PositiveuniqueConferences;
 
