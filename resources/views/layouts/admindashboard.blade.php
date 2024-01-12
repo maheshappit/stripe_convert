@@ -327,15 +327,22 @@
                 <div class="mobile-toggle-icon fs-3 d-flex d-lg-none">
                     <i class="bi bi-list"></i>
                 </div>
-                <form class="searchbar">
+                <form class="searchbar d-flex">
                     <div class="position-absolute top-50 translate-middle-y search-icon ms-3">
                         <i class="bi bi-search"></i>
                     </div>
-                    <input class="form-control" type="text" placeholder="Type here to search">
+                    <input class="form-control" id="search" type="text" placeholder="Type here to search" name="search">
+
+                    <!-- Search Button -->
+                    <button type="submit" id="searchButton" class="btn btn-primary position-absolute top-50 translate-middle-y end-0">
+                        <i class="bi bi-search"></i> Search
+                    </button>
+
                     <div class="position-absolute top-50 translate-middle-y search-close-icon">
                         <i class="bi bi-x-lg"></i>
                     </div>
                 </form>
+
                 <div class="top-navbar-right ms-auto">
                     <ul class="navbar-nav align-items-center gap-1">
                         <li class="nav-item search-toggle-icon d-flex d-lg-none">

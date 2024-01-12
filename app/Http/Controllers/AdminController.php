@@ -487,7 +487,7 @@ class AdminController extends Controller
         });
         $query->when($request->start_date != '', function ($query) use ($request) {
 
-            $query->whereBetween('conferences.user_created_at', [$request->start_date, $request->end_date]);
+            $query->whereBetween('comments.comment_created_date', [$request->start_date, $request->end_date]);
         });
     }
 
@@ -639,28 +639,31 @@ class AdminController extends Controller
     }
 
 
+    
     public function ClientUpdate(Request $request)
     {
 
 
         $now = Carbon::now();
-        $auth_user_id = Auth::user()->id;
         $currentDateTime = $now->toDateString();
         $user = Conference::find($request->id);
         $validator = Validator::make($request->all(), [
             'name' => 'required',
+            'client_status_id'=>'required',
+            'comment'=>'required',
         ]);
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         } else {
 
+            // dd($request->client_status);
 
             $user->update([
                 'name' => $request->name,
                 'country' => $request->country,
-                'updated_at' => $currentDateTime,
-                'user_id' => $auth_user_id
+                'user_updated_at' => $currentDateTime,
             ]);
+
 
 
             if (isset($request->comment)) {
@@ -671,15 +674,40 @@ class AdminController extends Controller
                     'conference' => $request->conference,
                     'article' => $request->article,
                     'client_status_id' => $request->client_status_id,
-                    'comment_created_date' => $currentDateTime,
-                    'user_id' => $auth_user_id
-
+                    'comment_created_date' => $currentDateTime
                 ]);
             }
 
+            if(isset($request->followup_date)){
 
 
-            // return redirect(route('admin.show.conferences'))->with('message', 'Client Updated Successfully');
+                $validator = Validator::make(
+                    $request->all(),
+                    [
+                        'followup_date' => 'required|string|max:255',
+                        'followup_type' => 'required|string|max:255',
+        
+                    ],
+        
+                );
+
+                if ($validator->fails()) {
+                    return response()->json(['errors' => $validator->errors()], 422);
+                } else {
+
+                followup::create([
+                    'article' => $request->article,
+                    'conference' => $request->conference,
+                    'email' => $request->email,
+                    'followup_date' => $request->followup_date,
+                    'note'=>$request->note,
+                    'name'=>$request->name,
+                    'followup_type' => $request->followup_type,
+                    'followup_created_date' => $currentDateTime
+                ]);
+            }
+
+            }
 
 
             return response()->json([
@@ -2694,7 +2722,11 @@ class AdminController extends Controller
         $query = Conference::query();
 
         if ($request->search) {
-            $query->where('email', 'like', '%' . $request->search . '%');
+            $query->where(function($query) use ($request) {
+                $query->where('email', 'like', '%' . $request->search . '%')
+                      ->orWhere('name', 'like', '%' . $request->search . '%');
+            });
+            
         } else {
             $this->applyFilters($query, $request);
         }

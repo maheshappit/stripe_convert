@@ -78,15 +78,17 @@ class UserController extends Controller
 
 
         $query = Conference::query();
-        $startDate= $request->from_date;
+        $startDate = $request->from_date;
 
 
         if (isset($request->search)) {
-            $query->where('email', 'like', '%' . $request->search . '%');
+            $query->where(function ($query) use ($request) {
+                $query->where('email', 'like', '%' . $request->search . '%')
+                    ->orWhere('name', 'like', '%' . $request->search . '%');
+            });
         } else {
 
             $this->applyFilters($query, $request);
-            
         }
 
 
@@ -103,50 +105,43 @@ class UserController extends Controller
     }
 
     private function applyFilters($query, $request)
-{
+    {
 
 
-    // dd($request->all());
-    $query->when($request->country != 'All', function ($query) use ($request) {
-        $query->where('country', $request->country);
-    });
+        // dd($request->all());
+        $query->when($request->country != 'All', function ($query) use ($request) {
+            $query->where('country', $request->country);
+        });
 
-    $query->when($request->conference != 'All', function ($query) use ($request) {
-        $query->where('conference', $request->conference);
-    });
+        $query->when($request->conference != 'All', function ($query) use ($request) {
+            $query->where('conference', $request->conference);
+        });
 
-    $query->when($request->article != 'All', function ($query) use ($request) {
-        $query->where('article', $request->article);
-    });
+        $query->when($request->article != 'All', function ($query) use ($request) {
+            $query->where('article', $request->article);
+        });
 
-    $query->when($request->email_status != 'All', function ($query) use ($request) {
-        $query->where('email_sent_status', $request->email_status);
-    });
+        $query->when($request->email_status != 'All', function ($query) use ($request) {
+            $query->where('email_sent_status', $request->email_status);
+        });
 
-    $query->when($request->email_sent_from_date != '', function ($query) use ($request) {
+        $query->when($request->email_sent_from_date != '', function ($query) use ($request) {
 
-        $query->whereBetween('email_sent_date', [$request->email_sent_from_date, $request->email_sent_to_date]);
+            $query->whereBetween('email_sent_date', [$request->email_sent_from_date, $request->email_sent_to_date]);
+        });
 
-    });
+        $query->when($request->from_date != '', function ($query) use ($request) {
 
-    $query->when($request->from_date != '', function ($query) use ($request) {
-
-        // dd($request->user_created_at);
-        $query->whereBetween('user_created_at', [$request->from_date, $request->to_date]);
-    });
-
-  
-
-    $query->when($request->user != 'All', function ($query) use ($request) {
-        $query->where('user_id', $request->user);
-    });
-    
-
-    
+            // dd($request->user_created_at);
+            $query->whereBetween('user_created_at', [$request->from_date, $request->to_date]);
+        });
 
 
-  
-}
+
+        $query->when($request->user != 'All', function ($query) use ($request) {
+            $query->where('user_id', $request->user);
+        });
+    }
 
 
 
@@ -165,7 +160,7 @@ class UserController extends Controller
 
     public function downloadReport(Request $request)
     {
-        
+
 
 
         $all_users = User::all();

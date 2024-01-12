@@ -484,6 +484,8 @@ class HomeController extends Controller
                 $conferences = ConferencesData::all();
 
         
+                $auth_user_id = Auth::user()->id;
+
 
         $all_conferences_count = Conference::getConferenceNameWithCount();
 
@@ -498,22 +500,22 @@ class HomeController extends Controller
 
         $today = Carbon::today();
 
-        $today_conferences_count = Conference::where('user_created_at', $today)
+        $today_conferences_count = Conference::where('user_created_at', $today)->where('user_id',$auth_user_id)
         ->distinct()
         ->pluck('conference') // Assuming 'name' is the column containing conference names
         ->count();
 
 
-        $today_data_collected_count = Conference::whereDate('created_at', $today)
+        $today_data_collected_count = Conference::whereDate('created_at', $today)->where('user_id',$auth_user_id)
         // Assuming 'name' is the column containing conference names
         ->count();
 
-        $today_sent_mail_count = Conference::where('email_sent_status', 'sent')
+        $today_sent_mail_count = Conference::where('email_sent_status', 'sent')->where('user_id',$auth_user_id)
         ->where('email_sent_date',$today)
         // Assuming 'name' is the column containing conference names
         ->count();
 
-        $today_pending_mail_count = Conference::where('email_sent_status', 'pending')
+        $today_pending_mail_count = Conference::where('email_sent_status', 'pending')->where('user_id',$auth_user_id)
         ->where('email_sent_date',$today)
         ->count();
 
