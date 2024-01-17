@@ -2783,9 +2783,22 @@ class AdminController extends Controller
 
         // $latestComments = $query->get();
 
+        // $query->when($request->email_status != 'All', function ($query) use ($request) {
+        //     // dd($request->email_status);
+        //     $query->where('email_sent_status', 'like', '%' . $request->email_status . '%');
+        // });
+
         $query->when($request->email_status != 'All', function ($query) use ($request) {
-            // dd($request->email_status);
-            $query->where('email_sent_status', 'like', '%' . $request->email_status . '%');
+
+            if($request->email_status == 'pending'){
+                $query->where(function ($query) use ($request) {
+                    $query->whereNull('email_sent_status')
+                          ->orWhere('email_sent_status', '=', 'pending');
+                });
+            }else{
+                $query->where('email_sent_status', 'like', '%' . $request->email_status . '%');
+
+            }
         });
 
         $query->when($request->country != 'All', function ($query) use ($request) {
