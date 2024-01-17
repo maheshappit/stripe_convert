@@ -96,9 +96,17 @@ class UserController extends Controller
 
 
         return Datatables::of($query)
+            
+
             ->addIndexColumn()
             ->addColumn('posted_by', function ($row) {
                 return $row->postedby->name ?? '';
+            })
+            ->addColumn('comments_count', function ($row) {
+                return $row->comments();
+            })
+            ->addColumn('client_status', function ($row) {
+                return $row->client_status();
             })
             ->rawColumns(['posted_by'])
             ->make(true);

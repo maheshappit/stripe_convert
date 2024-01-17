@@ -48,8 +48,8 @@ Route::middleware(['checkUserRole'])->group(function () {
     Route::any('/all-conferences/{id}', [App\Http\Controllers\HomeController::class,'allClients'])->name('all-conferences');
     Route::any('/all-articles/{id}', [App\Http\Controllers\HomeController::class,'allTopics'])->name('all-articles');
     Route::any('sent/emails', [App\Http\Controllers\HomeController::class,'sentEmail'])->name('user.sent.emails');
-    Route::get('comments', [App\Http\Controllers\HomeController::class,'getComments'])->name('user.get.comments');
-    Route::get('add-new-comments', [App\Http\Controllers\HomeController::class,'addNewComments'])->name('user.add.comments');
+    Route::get('/user/comments', [App\Http\Controllers\HomeController::class,'getComments'])->name('user.get.comments');
+    Route::post('user/add-new-comments', [App\Http\Controllers\HomeController::class,'addNewComments'])->name('user.add.comments');
     Route::post('update/conferencedata', [App\Http\Controllers\HomeController::class,'updateData'])->name('user.update.conferencedata');
     Route::get('todaydata/index', [App\Http\Controllers\HomeController::class,'todayData'])->name('user.all.todaydata');
     Route::get('show-recent-data', [App\Http\Controllers\HomeController::class,'ShowtodayData'])->name('user.show.recentdata');
@@ -136,7 +136,11 @@ Route::group(['middleware'=>'admin'],function(){
     Route::any('admin/get/user', [AdminController::class,'UserGetIDData'])->name('user.get.iddata');
 
     
+    Route::any('admin/add-new-conference', [AdminController::class,'showNewConference'])->name('admin.show.newconference');
+
     
+    Route::any('admin/save-conference', [AdminController::class,'saveConference'])->name('admin.save.newconference');
+
 
 });
 

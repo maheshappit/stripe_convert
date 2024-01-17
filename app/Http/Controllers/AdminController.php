@@ -50,55 +50,90 @@ class AdminController extends Controller
     }
 
 
-    public function getAllUsers(){
+    public function getAllUsers()
+    {
 
-                $query = User::query();
+        $query = User::query();
 
-                return Datatables::of($query)
+        return Datatables::of($query)
             ->make(true);
-
-
     }
 
-    public function UserGetIDData(Request $request){
+    public function showNewConference()
+    {
+        return view('admin.newconference');
+    }
+
+
+    public function saveConference(Request $request)
+    {
+
+        $auth_user_id = Auth::user()->id;
+
+
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'name' => 'required|string|max:255|unique:conferences_data',
+
+            ],
+
+        );
+
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        } else {
+            
+
+            ConferencesData::create([
+                'name' => $request->name,
+
+                'created_by' =>  $auth_user_id
+            ]);
+
+            return response()->json([
+                'message' => 'Comment added successfully',
+                'status_code' => 200,
+            ], 200);
+        }
+    }
+
+    public function UserGetIDData(Request $request)
+    {
 
         $user = User::find($request->id);
 
         if (!$user) {
             return response()->json(['error' => 'User not found'], 404);
         }
-    
-        return response()->json(['user' => $user], 200);
-        
 
+        return response()->json(['user' => $user], 200);
     }
 
-    public function NormalUserDelete(Request $request){
+    public function NormalUserDelete(Request $request)
+    {
 
-       
+
         $user = User::findOrFail($request->id);
         $user->delete();
-        
+
         return response()->json([
             'status_code' => '200',
             'message' => 'Client Deleted Successfully',
         ]);
-
-
-
-        
     }
 
 
 
 
-    public function showUser(){
+    public function showUser()
+    {
 
         $all_conferences = ConferencesData::all();
 
 
-        return view('admin.adduser',compact('all_conferences'));
-
+        return view('admin.adduser', compact('all_conferences'));
     }
 
     public function getComments(Request $request)
@@ -194,7 +229,7 @@ class AdminController extends Controller
 
 
 
-        return view('admin.followup',compact('countries'));
+        return view('admin.followup', compact('countries'));
     }
 
 
@@ -314,7 +349,7 @@ class AdminController extends Controller
 
         $query->where('client_status_id', 9);
 
-        
+
 
         $this->PositiveapplyFilters($query, $request);
 
@@ -358,7 +393,7 @@ class AdminController extends Controller
 
         $query->where('client_status_id', 7);
 
-        
+
         $this->PositiveapplyFilters($query, $request);
 
 
@@ -448,7 +483,7 @@ class AdminController extends Controller
 
         $this->PositiveapplyFilters($query, $request);
 
-       
+
         $data = $query->get();
         return Datatables::of($data)
             ->addIndexColumn()
@@ -474,16 +509,16 @@ class AdminController extends Controller
         $query->when($request->conference == 'All', function ($query) use ($request) {
             $query->whereNotNull('conferences.email');
         });
-        
+
         $query->when($request->conference != 'All', function ($query) use ($request) {
             $query->where('conferences.conference', $request->conference);
         });
 
 
-       
+
         $query->when($request->country != 'All', function ($query) use ($request) {
 
-            $query->where('conferences.country',$request->country);
+            $query->where('conferences.country', $request->country);
         });
         $query->when($request->start_date != '', function ($query) use ($request) {
 
@@ -639,7 +674,7 @@ class AdminController extends Controller
     }
 
 
-    
+
     public function ClientUpdate(Request $request)
     {
 
@@ -649,8 +684,8 @@ class AdminController extends Controller
         $user = Conference::find($request->id);
         $validator = Validator::make($request->all(), [
             'name' => 'required',
-            'client_status_id'=>'required',
-            'comment'=>'required',
+            'client_status_id' => 'required',
+            'comment' => 'required',
         ]);
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
@@ -678,7 +713,7 @@ class AdminController extends Controller
                 ]);
             }
 
-            if(isset($request->followup_date)){
+            if (isset($request->followup_date)) {
 
 
                 $validator = Validator::make(
@@ -686,27 +721,26 @@ class AdminController extends Controller
                     [
                         'followup_date' => 'required|string|max:255',
                         'followup_type' => 'required|string|max:255',
-        
+
                     ],
-        
+
                 );
 
                 if ($validator->fails()) {
                     return response()->json(['errors' => $validator->errors()], 422);
                 } else {
 
-                followup::create([
-                    'article' => $request->article,
-                    'conference' => $request->conference,
-                    'email' => $request->email,
-                    'followup_date' => $request->followup_date,
-                    'note'=>$request->note,
-                    'name'=>$request->name,
-                    'followup_type' => $request->followup_type,
-                    'followup_created_date' => $currentDateTime
-                ]);
-            }
-
+                    followup::create([
+                        'article' => $request->article,
+                        'conference' => $request->conference,
+                        'email' => $request->email,
+                        'followup_date' => $request->followup_date,
+                        'note' => $request->note,
+                        'name' => $request->name,
+                        'followup_type' => $request->followup_type,
+                        'followup_created_date' => $currentDateTime
+                    ]);
+                }
             }
 
 
@@ -721,10 +755,10 @@ class AdminController extends Controller
     {
 
         $user = Conference::find($request->id);
-        $all_conferences=ConferencesData::all();
+        $all_conferences = ConferencesData::all();
         $clientStatuses = ClientStatus::pluck('name', 'id')->all();
 
-        return view('admin.edit', compact('user', 'clientStatuses','all_conferences'));
+        return view('admin.edit', compact('user', 'clientStatuses', 'all_conferences'));
     }
 
     public function NormalUserEdit(Request $request)
@@ -735,7 +769,7 @@ class AdminController extends Controller
         return view('admin.normaluseredit', compact('user'));
     }
 
-    
+
 
 
     public function AllUsers()
@@ -751,27 +785,24 @@ class AdminController extends Controller
 
         $validator = Validator::make($request->all(), [
             'name' => 'required',
-            'email'=>'required',
+            'email' => 'required',
         ]);
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
-        }else{
+        } else {
 
             $user = User::findOrFail($request->id);
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->role = $request->role;
+            $user->name = $request->name;
+            $user->email = $request->email;
+            $user->role = $request->role;
 
-        $user->save();
-        return response()->json([
-            'message' => 'User  Updated Successfully',
-            'status_code' => '200'
+            $user->save();
+            return response()->json([
+                'message' => 'User  Updated Successfully',
+                'status_code' => '200'
 
-        ], 200);
-
+            ], 200);
         }
-
-        
     }
 
 
@@ -847,7 +878,7 @@ class AdminController extends Controller
 
 
 
-        return view('admin.reports', compact('all_users', 'users_count', 'inserted_count', 'updated_count', 'download_count', 'all_conferences', 'clientStatuses','all_conferences'));
+        return view('admin.reports', compact('all_users', 'users_count', 'inserted_count', 'updated_count', 'download_count', 'all_conferences', 'clientStatuses', 'all_conferences'));
     }
 
     public function downloadReport(Request $request)
@@ -1656,16 +1687,18 @@ class AdminController extends Controller
             return response()->json([
                 'status_code' => '200',
                 'message' => 'User Created Successfully',
-            ]);        }
+            ]);
+        }
     }
 
 
 
-    public function getStatusCount($status=null){
+    public function getStatusCount($status = null)
+    {
 
         $positivequery = Conference::query();
 
-        
+
         $today = Carbon::today();
         $formattedDate = $today->format('Y-m-d');
 
@@ -1680,15 +1713,13 @@ class AdminController extends Controller
             ->unique(function ($item) {
                 return $item->email . $item->article . $item->conference;
             })
-            ->sortByDesc('created_at')->where('client_status_id', $status)->where('comment_created_date',$formattedDate);
+            ->sortByDesc('created_at')->where('client_status_id', $status)->where('comment_created_date', $formattedDate);
 
         $positivequery = $PositiveuniqueConferences;
 
-        $positive_count=$positivequery->count();
+        $positive_count = $positivequery->count();
 
         return $positive_count;
-
-
     }
 
     public function dashboard()
@@ -1698,30 +1729,30 @@ class AdminController extends Controller
         $today = Carbon::today();
 
         $today_conferences_count = Conference::where('user_created_at', $today)
-        ->distinct()
-        ->pluck('conference') // Assuming 'name' is the column containing conference names
-        ->count();
+            ->distinct()
+            ->pluck('conference') // Assuming 'name' is the column containing conference names
+            ->count();
 
 
         $today_data_collected_count = Conference::whereDate('created_at', $today)
-        // Assuming 'name' is the column containing conference names
-        ->count();
+            // Assuming 'name' is the column containing conference names
+            ->count();
 
         $today_sent_mail_count = Conference::where('email_sent_status', 'sent')
-        ->where('email_sent_date',$today)
-        // Assuming 'name' is the column containing conference names
-        ->count();
+            ->where('email_sent_date', $today)
+            // Assuming 'name' is the column containing conference names
+            ->count();
 
         $today_pending_mail_count = Conference::where('email_sent_status', 'pending')
-        ->where('email_sent_date',$today)
-        ->count();
+            ->where('email_sent_date', $today)
+            ->count();
 
-        $positive_count=$this->getStatusCount(1);
-        $negative_count=$this->getStatusCount(2);
-        $followup_count=$this->getStatusCount(3);
-        $waiting_for_payment_count=$this->getStatusCount(4);
-        $converted_count=$this->getStatusCount(5);
-        $rejected_count=$this->getStatusCount(5);
+        $positive_count = $this->getStatusCount(1);
+        $negative_count = $this->getStatusCount(2);
+        $followup_count = $this->getStatusCount(3);
+        $waiting_for_payment_count = $this->getStatusCount(4);
+        $converted_count = $this->getStatusCount(5);
+        $rejected_count = $this->getStatusCount(5);
         $countries = Conference::distinct()->pluck('country')->toArray();
 
         // $all_conferences=ConferencesData::all();
@@ -1729,7 +1760,7 @@ class AdminController extends Controller
         $all_conferences = Conference::getConferenceNameWithCount();
 
 
-        return view('admin.dashboard', compact('all_conferences','countries','today_conferences_count','today_data_collected_count','today_sent_mail_count','today_pending_mail_count','positive_count','negative_count','followup_count','waiting_for_payment_count','converted_count','rejected_count'));
+        return view('admin.dashboard', compact('all_conferences', 'countries', 'today_conferences_count', 'today_data_collected_count', 'today_sent_mail_count', 'today_pending_mail_count', 'positive_count', 'negative_count', 'followup_count', 'waiting_for_payment_count', 'converted_count', 'rejected_count'));
     }
 
 
@@ -2722,11 +2753,10 @@ class AdminController extends Controller
         $query = Conference::query();
 
         if ($request->search) {
-            $query->where(function($query) use ($request) {
+            $query->where(function ($query) use ($request) {
                 $query->where('email', 'like', '%' . $request->search . '%')
-                      ->orWhere('name', 'like', '%' . $request->search . '%');
+                    ->orWhere('name', 'like', '%' . $request->search . '%');
             });
-            
         } else {
             $this->applyFilters($query, $request);
         }

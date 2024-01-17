@@ -8,4 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class ConferencesData extends Model
 {
     use HasFactory;
+
+    
+    protected $table='conferences_data';
+
+    protected $fillable = [
+        'name',
+        'created_by',
+        
+    ];
 }

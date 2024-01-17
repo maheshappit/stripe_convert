@@ -472,13 +472,20 @@
                             </a>
                         </li>
 
+                        <li>
+                            <a href="{{route('admin.show.newconference')}}">
+                                <i class="bi bi-circle"></i>
+                                Add New Conference
+                            </a>
+                        </li>
+
                        
 
 
                         <li>
                             <a href="{{route('admin.show.conferences')}}">
                                 <i class="bi bi-circle"></i>
-                                Conference List
+                               All  Clients List
                             </a>
                         </li>
                     </ul>

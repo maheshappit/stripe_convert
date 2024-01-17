@@ -71,7 +71,8 @@
                                             <div class="col-12">
                                                 <button id="uploadButton"  class="btn btn-primary px-4">Submit</button>
                                             </div>
-                                            <a href="assets/Sample.csv" download="">Sample File Download</a>
+                                            <a href="public/assets/Sample.csv" download="">Sample File Download</a>
+                                            <p style="color:red">Note : please Upload Selected Conference Data only</p>
                                         </form>
 
                                         <div id="message" style="color: green"></div>

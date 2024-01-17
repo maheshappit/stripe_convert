@@ -113,6 +113,202 @@
         }
     </style>
 
+    <style>
+        .add-button {
+            width: 100px;
+        }
+
+        table.dataTable>tbody>tr {
+            /* display: inline-block; */
+            white-space: nowrap;
+            /* Prevent line breaks within the row */
+            margin-right: 10px;
+            height: auto;
+            /* Add spacing between rows if necessary */
+
+        }
+
+        .custom-button {
+            padding: 8px 16px;
+            font-size: 14px;
+            background-color: blue;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .custom-button:hover {
+            background-color: darkblue;
+        }
+
+        thead {
+            border-top: none;
+            font-size: small;
+        }
+
+        tbody tr>td {
+            border-top: none;
+            font-size: small;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+
+
+        .toast-message {
+            color: black
+        }
+
+        .modal {
+            position: fixed;
+            top: -145px !important;
+            left: 0;
+            width: 100%;
+            height: 810px !important;
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 30px
+        }
+
+        .close:hover {
+            color: black;
+        }
+
+        .ViewCommentsModal {
+            display: none;
+            position: fixed;
+            top: -138px;
+            left: 0;
+            width: 100%;
+            height: 500% !important;
+            background-color: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            overflow: auto;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 20px;
+            max-width: 80%;
+            max-height: 80%;
+            overflow-y: auto;
+            border-radius: 5px;
+        }
+
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+
+        .comment-card {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            /* Add more styling as needed */
+        }
+
+        .ViewFollowModal {
+            display: none;
+            position: fixed;
+            top: -138px;
+            left: 0;
+            width: 100%;
+            height: 280% !important;
+            background-color: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            overflow: auto;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 20px;
+            max-width: 80%;
+            max-height: 80%;
+            overflow-y: auto;
+            border-radius: 5px;
+        }
+
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+
+        .comment-card {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            /* Add more styling as needed */
+        }
+
+        .add-button {
+            top: 0;
+            right: 150px;
+            margin: 10px;
+            /* Adjust the margin as needed */
+        }
+
+        .button-container {
+            display: flex;
+            gap: 10px;
+            /* Adjust the gap as needed */
+        }
+
+        .label {
+            width: 21rem !important;
+
+        }
+
+        .md-6 {
+            display: flex;
+
+        }
+
+        .row {
+            display: flex !important;
+            margin-left: 0px !important;
+            margin-right: 0px !important;
+            align-items: center !important;
+
+        }
+
+        .form-control {
+            width: auto !important;
+            display: inline;
+        }
+
+        /* #myForm3{
+        display: flex !important;
+    } */
+    </style>
+
 </head>
 
 
@@ -212,7 +408,7 @@
                             <hr class="dropdown-divider">
                         </li>
                         <li>
-                            <a class="dropdown-item" href="{{ route('logout') }}" >
+                            <a class="dropdown-item" href="{{ route('logout') }}">
                                 <div class="d-flex align-items-center">
                                     <div class="">
                                         <i class="bi bi-lock-fill"></i>
@@ -271,7 +467,7 @@
                         <li>
                             <a href="{{route('user.add.conference')}}">
                                 <i class="bi bi-circle"></i>
-                                Add New
+                                Add New Client
                             </a>
                         </li>
                         <li>
@@ -388,6 +584,71 @@
 
         @yield('content')
 
+        <div class="conatiner">
+
+            <div id="ViewCommentsModal" class="modal">
+
+                <!-- Modal content -->
+                <div class="modal-content">
+                    <!-- <form id="myForm3" class="hidden"> -->
+                    <div class="row">
+                        <form>
+                            @csrf
+                            <div id="myForm3" class="hidden">
+                                <div class="md-6 align-items-center d-inline-flex">
+
+
+                                    <input type="text" id="articleInput" hidden>
+                                    <input type="text" id="conferenceInput" hidden>
+                                    <input type="text" id="emailInput" hidden>
+
+                                    <input type="text" id="nameInput" hidden>
+
+
+                                    <label class="label">Select Client Status</label>
+                                    <select class="form-select w-100" id="client_status_id">
+
+                                        <option value="">--Choose--</option>
+
+                                        <option value="1">Positive</option>
+                                        <option value="2">Negative</option>
+
+                                    </select>
+                                </div>
+                                <div class="d-inline">
+                                    <span class="col-md-6">
+                                        <label>Write comment</label>
+                                        <input class="form-control" type="text" id="comment">
+                                    </span>
+                                </div>
+
+                            </div>
+                        </form>
+                        <div class="d-inline">
+                            <button class="add-button btn btn-primary btn-sm" id="showFormBtn2">Add</button>
+                        </div>
+                        <span class="close" onclick="closeViewModal()">&times;</span>
+
+                    </div>
+
+
+
+
+
+
+                    <div id="commentsContainer">
+                        <!-- Comments will be dynamically inserted here -->
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+
+
+
+
 
 
 
@@ -442,6 +703,100 @@
 
         });
     </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Add an event listener to the button
+            document.getElementById("showFormBtn2").addEventListener("click", function() {
+
+                // Get the form element
+                var form2 = document.getElementById("myForm3");
+
+                // Toggle the "hidden" class to show/hide the form
+                form2.classList.toggle("hidden");
+
+                // Change the button text from "Add" to "Save"
+                var buttonText = this.innerText;
+                this.innerText = buttonText === "Add" ? "Save" : "Add";
+            });
+        });
+
+        function saveForm() {
+            var formData = $('#myForm3').serialize(); // Serialize form data
+            const article_id = $('#articleInput').val();
+            const email_id = $('#emailInput').val();
+            const conference_id = $('#conferenceInput').val();
+            const client_status_id = $('#client_status_id').val();
+
+
+
+
+
+            const comment = $('#comment').val();
+
+
+
+
+
+            $.ajax({
+                type: 'POST',
+                url: '{{route('user.add.comments')}}',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: {
+                    article: article_id,
+                    email: email_id,
+                    client_status_id: client_status_id,
+                    comment: comment,
+                    conference: conference_id,
+
+                },
+                success: function(response) {
+                    // Handle success, if needed
+                    console.log(response);
+                    toastr.success(response.message);
+
+                    $('#client_status_id').val('');
+                    $('#comment').val('');
+
+                    console.log(response.comments);
+
+
+                    updateModalContent2(response.comments);
+
+
+                    // If submission is successful, hide the form and change button text back to "Add"
+                    $('#myForm3').addClass('hidden');
+                    $('#showFormBtn2').text('Add');
+                },
+                error: function(xhr, status, error) {
+
+                    var errors = xhr.responseJSON.errors;
+                    handleValidationErrors(errors);
+                },
+            });
+        }
+
+        function handleValidationErrors(errors) {
+            // Display validation errors as toasts
+            for (var field in errors) {
+                if (errors.hasOwnProperty(field)) {
+                    toastr.error(errors[field][0]);
+                }
+            }
+        }
+
+
+        // Add an event listener to the "Save" button
+        document.getElementById("showFormBtn2").addEventListener("click", function() {
+            // Check if the button text is "Save" and submit the form if it is
+            if (this.innerText === "Save") {
+                saveForm();
+            }
+        });
+    </script>
+
 </body>
 
 </html>

@@ -212,6 +212,8 @@ class HomeController extends Controller
     {
 
 
+        // dd($request->all());
+
 
         $now = Carbon::now();
         $currentDateTime = $now->toDateString();
